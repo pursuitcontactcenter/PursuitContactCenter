@@ -1,0 +1,101 @@
+<template>
+    <div class="dashboard-container">
+        <template if:false={selectedCallLogId}>
+            <h1 class="heading">
+                <span class="call-icon">☎️</span> Call Log Dashboard
+            </h1>
+
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <!-- CallLog ID -->
+                            <th>
+                                <a class="sortable" data-field="CallLogId__c" onclick={handleSort}>
+                                    CallLog <span class="sort-arrow">{callLogIdArrow}</span>
+                                </a>
+                            </th>
+
+                            <!-- Category -->
+                            <th>
+                                <a class="sortable" data-field="Category__c" onclick={handleSort}>
+                                    Category <span class="sort-arrow">{categoryArrow}</span>
+                                </a>
+                            </th>
+
+                            <!-- Agent -->
+                            <th>
+                                <a class="sortable" data-field="agentName" onclick={handleSort}>
+                                    Agent <span class="sort-arrow">{agentArrow}</span>
+                                </a>
+                            </th>
+
+                            <!-- Client -->
+                            <th>
+                                <a class="sortable" data-field="clientName" onclick={handleSort}>
+                                    Client <span class="sort-arrow">{clientArrow}</span>
+                                </a>
+                            </th>
+
+                            <!-- Duration -->
+                            <th>
+                                <a class="sortable" data-field="CallDuration__c" onclick={handleSort}>
+                                    Duration <span class="sort-arrow">{durationArrow}</span>
+                                </a>
+                            </th>
+
+                            <!-- Quality -->
+                            <th>
+                                <a class="sortable" data-field="qualityLabel" onclick={handleSort}>
+                                    Quality <span class="sort-arrow">{qualityArrow}</span>
+                                </a>
+                            </th>
+
+                            <!-- Mobile -->
+                            <th>
+                                <a class="sortable" data-field="Mobile_Number__c" onclick={handleSort}>
+                                    Mobile <span class="sort-arrow">{mobileArrow}</span>
+                                </a>
+                            </th>
+
+                            <!-- Engagement Date -->
+                            <th>
+                                <a class="sortable" data-field="Engagement_Date__c" onclick={handleSort}>
+                                    Engagement Date <span class="sort-arrow">{engagementDateArrow}</span>
+                                </a>
+                            </th>
+
+                            <!-- Details (no sort) -->
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <template for:each={callLogs} for:item="log">
+                            <tr key={log.Id}>
+                                <td title={log.CallLogId__c} class="cell-hover">{log.CallLogId__c}</td>
+                                <td title={log.Category__c} class="cell-hover">{log.Category__c}</td>
+                                <td title={log.agentName} class="cell-hover">{log.agentName}</td>
+                                <td title={log.clientName} class="cell-hover">{log.clientName}</td>
+                                <td title={log.CallDuration__c} class="cell-hover">{log.CallDuration__c}</td>
+                                <td title={log.qualityLabel} class="cell-hover">{log.qualityLabel}</td>
+                                <td title={log.Mobile_Number__c} class="cell-hover">{log.Mobile_Number__c}</td>
+                                <td title={log.Engagement_Date__c} class="cell-hover">{log.Engagement_Date__c}</td>
+                                <td>
+                                    <button class="details-btn" data-id={log.Id} onclick={handleDetailsClick}>
+                                        Details
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+
+        <template if:true={selectedCallLogId}>
+            <button class="back-btn" onclick={handleBackClick}>⬅ Back</button>
+            <c-show-call-details record-id={selectedCallLogId}></c-show-call-details>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,154 @@
+<!-- <template>
+    <template if:true={agentList}>
+        <div class="card-container">
+            <template for:each={agentList} for:item="agent">
+                <div key={agent.Id} class="agent-card">
+                    <div class="card-header" data-id={agent.Id} onclick={toggleDetails}>
+                        <div class="left">
+                            <img src={agent.userImage} alt="User" class="avatar" />
+                        </div>
+                        <div class="right">
+                            <h3 class="agent-name">{agent.Name}</h3>
+                            <p class="agent-title">{agent.userName}</p>
+                        </div>
+                    </div>
+
+                    <template if:true={agent.isExpanded}>
+                        <div class="steps-wrapper enhanced-detail">
+                            <div class="detail-header">
+                                <h2 class="call-title">🧭 Process Improvement</h2>
+                            </div>
+                            <div class="section">
+                                <h3>📋 Recommendation</h3>
+                                <p>{agent.processRecommendation}</p>
+                            </div>
+                            <div class="section">
+                                <h3>💡 Opportunity</h3>
+                                <p><em>{agent.processOpportunity}</em></p>
+                            </div>
+                            <div class="section">
+                                <h3>📌 Guidance Steps</h3>
+                                <ul class="guidance-list">
+                                    <template for:each={agent.processGuidance} for:item="step">
+                                        <li key={step.key}>
+                                            {step.value}
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="steps-wrapper enhanced-detail">
+                            <div class="detail-header">
+                                <h2 class="call-title">🧑‍💼 Agent Improvement</h2>
+                            </div>
+                            <div class="section">
+                                <h3>📋 Recommendation</h3>
+                                <p>{agent.agentRecommendation}</p>
+                            </div>
+                            <div class="section">
+                                <h3>💡 Opportunity</h3>
+                                <p><em>{agent.agentOpportunity}</em></p>
+                            </div>
+                            <div class="section">
+                                <h3>📌 Guidance Steps</h3>
+                                <ul class="guidance-list">
+                                    <template for:each={agent.agentGuidance} for:item="step">
+                                        <li key={step.key}>
+                                            {step.value}
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <template if:true={error}>
+        <p class="slds-text-color_error">Error loading agents: {error.message}</p>
+    </template>
+</template> -->
+<template>
+    <template if:true={agentList}>
+        <div class="card-container">
+            <template for:each={agentList} for:item="agent">
+                <div key={agent.Id} class="agent-card">
+                    <div class="card-header" data-id={agent.Id} onclick={toggleDetails}>
+                        <div class="left-section">
+                            <!-- <img src={agent.userImage} alt="Agent Photo" class="agent-photo" /> -->
+                            <template if:true={agent.userImage}>
+                                <img src={agent.userImage} class="image profile-pic" alt="" title="">
+                            </template>
+                            <template if:false={agent.userImage}>
+                                <h2 class="call-agent">👤 </h2>
+                            </template>
+                        </div>
+                        <div class="right-section">
+                            <h2 class="agent-name">{agent.Name}</h2>
+                            <p class="agent-title">{agent.userName}</p>
+                            <p class="agency-name">Real Estate 🏠</p>
+                        </div>
+                        <div class="active-status-main">
+                            <div class="active-status-legend-item"></div>
+                            <span class="active-status-text">Active</span>
+                        </div>
+                    </div>
+
+                    <template if:true={agent.isExpanded}>
+                        <div class="card-body fade-in">
+                            <div class="steps-wrapper enhanced-detail">
+                                <div class="detail-header">
+                                    <h2 class="call-title">🧑‍💼 Agent Improvement</h2>
+                                </div>
+                                <div class="section">
+                                    <h3>📋 Recommendation</h3>
+                                    <p>{agent.agentRecommendation}</p>
+                                </div>
+                                <div class="section">
+                                    <h3>💡 Opportunity</h3>
+                                    <p><em>{agent.agentOpportunity}</em></p>
+                                </div>
+                                <div class="section">
+                                    <h3>📌 Guidance Steps</h3>
+                                    <ul class="guidance-list">
+                                        <template for:each={agent.agentGuidance} for:item="step">
+                                            <li key={step.key}>{step.value}</li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="steps-wrapper enhanced-detail">
+                                <div class="detail-header">
+                                    <h2 class="call-title">🧭 Process Improvement</h2>
+                                </div>
+                                <div class="section">
+                                    <h3>📋 Recommendation</h3>
+                                    <p>{agent.processRecommendation}</p>
+                                </div>
+                                <div class="section">
+                                    <h3>💡 Opportunity</h3>
+                                    <p><em>{agent.processOpportunity}</em></p>
+                                </div>
+                                <div class="section">
+                                    <h3>📌 Guidance Steps</h3>
+                                    <ul class="guidance-list">
+                                        <template for:each={agent.processGuidance} for:item="step">
+                                            <li key={step.key}>{step.value}</li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <template if:true={error}>
+        <p class="slds-text-color_error">Error loading agents: {error.message}</p>
+    </template>
+</template>

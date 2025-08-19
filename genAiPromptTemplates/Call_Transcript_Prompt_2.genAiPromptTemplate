@@ -1,0 +1,2197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_24</activeVersionIdentifier>
+    <developerName>Call_Transcript_Prompt_2</developerName>
+    <masterLabel>Call Transcript Prompt 2</masterLabel>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ {!$Input:CallLog.Name}
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- &apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others]
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Agent Strengths and Development Needs:&apos; prompt and find the L2 prompts related to this and then generate &quot;Agent_Improvement_Insights&quot; in the output JSON if find multiple &quot;Agent_Improvement_Insights&quot; merge all and make it ones
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Automation Opportunities:&apos; prompt and find the L2 prompts related to this and then generate &quot;Process_Improvement_Insights&quot; in the output JSON if find multiple &quot;Process_Improvement_Insights&quot; merge all and make it ones
+
+---
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1 and L2 category mappings here:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+#### 5.1: Identify all relevant L1_IDs discussed in the transcript.
+
+#### 5.2: For each L1_ID:
+- Identify all associated L2_IDs
+- For each L2_ID:
+ - If the answer is valid and mentioned in the conversation (not `&quot;No&quot;`, `&quot;null&quot;`, or missing), include it and give a proper answer by analyzing from the transcript in the bellow json and in the &quot;L1_L2_Details&quot; table there should be all L2 answers from the &quot;L2_Table&quot;-&quot;Yes&quot; section and include those with their related L1 prompt (Example - If there are 01, 02, 03 L2 prompt found in the &quot;L2_Table&quot; &quot;Yes&quot; section for that add them Like &quot;P1&quot;: &quot;01&quot;,&quot;P1&quot;: &quot;02&quot;,&quot;P1&quot;: &quot;03&quot; etc ) in the &quot;L1_L2_Details&quot; section there should be same no of records presents in the &quot;L2_Table&quot; - &quot;Yes&quot; Section:
+ ```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+&quot;phone_number&quot;` → first section
+&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+ &quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+&quot;status&quot;` → fifth section
+&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+&apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others],
+&quot;CallType&quot; - &quot;Check from the transcript and find this call is &apos;Inbound&apos; or &apos;Outbound&apos;, Check from the conversation in a agent is calling to the clint then it should be outbound otherwise it should be inbound&quot;,
+&quot;Category&quot; - &quot;Analyze and check the Category of the call it should be from the picklist values -  &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;(If the category is not found put as - &apos;General Enquiry&apos;)
+&quot;
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+&quot;&lt;L1s with at least one valid L2&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+},
+&quot;No&quot;: {
+&quot;&lt;L1s with only invalid or missing L2s&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+}
+ },
+ &quot;L2_Table&quot;: {
+ &quot;Yes&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+ ...
+ },
+ &quot;No&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;description or reason&gt;&quot;,
+ ...
+ }
+ },
+&quot;L1_L2_Details&quot; : {
+&lt;L1_ID&gt; : &lt;L2_ID&gt;
+}
+&quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+  &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+  &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+ }
+
+}
+
+#### 5.3: Classify L1_IDs
+- If **at least one valid L2_ID** exists, put the L1_ID in:
+ ```json
+ &quot;L1_Table&quot;: {
+  &quot;Yes&quot;: {
+   &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+  }
+
+
+
+
+</content>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_11</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name:  
+ `{!$Input:CallLog.Name}`  
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+Return your response in the following strict JSON format.
+
+The format should include:
+
+- Client metadata from Salesforce
+- Call metadata extracted from the file name
+- Quality, CallType, and Category analysis
+- Agent Improvement and Process Improvement insights
+- All L2 prompt answers (flattened, one per line)
+- Each and every L2 prompt must have an answer — no skipping
+- Here you need to collect all question from {!$Input:Prompt_Summary_Setting.Summary_Text__c} and collect all the &apos;L2_ID&apos;s and analyze the ans of those question and ans all of the question do not skip any one from them 
+
+---
+
+📦 **Output JSON Format (flattened, not table-wise):**
+
+```json
+{
+ &quot;client_id&quot;: &quot;{!$Input:CallLog.Client__r.Id}&quot;,
+ &quot;agent_id&quot;: &quot;{!$Input:CallLog.AgentID__r.Id}&quot;,
+ &quot;call_id&quot;: &quot;{!$Input:CallLog.Id}&quot;,
+ &quot;phone_number&quot;: &quot;&lt;Extracted from filename&gt;&quot;,
+ &quot;call_date&quot;: &quot;&lt;Extracted from filename, format YYYY-MM-DD&gt;&quot;,
+ &quot;start_time&quot;: &quot;&lt;Extracted from filename, HH:MM:SS&gt;&quot;,
+ &quot;end_time&quot;: &quot;&lt;Extracted from filename, HH:MM:SS&gt;&quot;,
+ &quot;status&quot;: &quot;&lt;Extracted from filename&gt;&quot;,
+ &quot;call_duration&quot;: &quot;&lt;Time difference in &apos;X minutes Y seconds&apos;&gt;&quot;,
+ &quot;Quality_of_Call&quot;: &quot;&lt;Score out of 10 based on customer sentiment&gt;&quot;,
+ &quot;CallType&quot;: &quot;&lt;&apos;Outbound&apos; if agent initiates, otherwise &apos;Inbound&apos;&gt;&quot;,
+ &quot;Category&quot;: &quot;&lt;One of: &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;&gt;&quot;,
+
+ &quot;Agent_Improvement_Insights&quot;: {
+  &quot;Opportunity&quot;: &quot;**&lt;Opportunity Title&gt;**: &lt;Explain what the agent could improve&gt;&quot;,
+  &quot;Recommendation&quot;: &quot;&lt;Provide a realistic, practical suggestion&gt;&quot;,
+  &quot;Guidance&quot;: [
+   &quot;1) Suggestion 1&quot;,
+   &quot;2) Suggestion 2&quot;,
+   &quot;3) Suggestion 3&quot;
+  ]
+ },
+
+ &quot;Process_Improvement_Insights&quot;: {
+  &quot;Opportunity&quot;: &quot;**&lt;Opportunity Title&gt;**: &lt;Describe the inefficiency or gap in process&gt;&quot;,
+  &quot;Recommendation&quot;: &quot;&lt;Scalable solution to improve process&gt;&quot;,
+  &quot;Guidance&quot;: [
+   &quot;1) Suggestion 1&quot;,
+   &quot;2) Suggestion 2&quot;,
+   &quot;3) Suggestion 3&quot;
+  ]
+ },
+
+ &quot;P1_01&quot;: &quot;Answer here...&quot;,
+.........
+}
+
+</content>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Draft</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_12</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ `{!$Input:CallLog.Name}`  
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- `&quot;Quality_of_Call&quot;` → analyze the transcript and rate out of 10 based on customer sentiment and satisfaction
+- `&quot;CallType&quot;` → analyze transcript: if agent initiates call → &quot;Outbound&quot;, else &quot;Inbound&quot;
+- `&quot;Category&quot;` → picklist from transcript: `&apos;Order Placement&apos;`, `&apos;Order Modification&apos;`, `&apos;General Enquiry&apos;`, `&apos;Dietician Assessment&apos;`, `&apos;Order Cancellation&apos;`. If unknown, default to `&apos;General Enquiry&apos;`
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Analyze {!$Input:Prompt_Summary_Setting.Summary_Text__c} for section:  
+**&quot;Agent Strengths and Development Needs:&quot;**  
+Extract all relevant L2 prompts and merge into a single `&quot;Agent_Improvement_Insights&quot;` object in the output.
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Analyze {!$Input:Prompt_Summary_Setting.Summary_Text__c} for section:  
+**&quot;Automation Opportunities:&quot;**  
+Extract all relevant L2 prompts and merge into a single `&quot;Process_Improvement_Insights&quot;` object in the output.
+
+---
+
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1/L2 mappings in:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+---
+
+#### 5.1: Identify all L1_IDs referenced in the transcript.
+
+#### 5.2: For each L1_ID:
+- Identify associated L2_IDs
+- For each L2_ID:
+ - If valid and mentioned in the transcript, extract a proper answer
+ - If L2_ID is one of `&apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;`:
+  - Always include in `&quot;L2_Table&quot; → &quot;Yes&quot;` even if not found in transcript
+  - If not found, generate a **positive, understandable fallback answer** like:
+   `&quot;Information not explicitly stated but assumed to be positive based on tone/context&quot;`
+  - Add its related L1_ID to `&quot;L1_Table&quot; → &quot;Yes&quot;`
+- Include **any other valid L2 answers** in `&quot;L2_Table&quot;` and assign L1_IDs in `&quot;L1_L2_Details&quot;`
+
+---
+
+### Final JSON Output Format
+
+```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+ &quot;phone_number&quot;: &quot;&lt;parsed from filename&gt;&quot;,
+ &quot;call_date&quot;: &quot;&lt;parsed&gt;&quot;,
+ &quot;start_time&quot;: &quot;&lt;parsed&gt;&quot;,
+ &quot;end_time&quot;: &quot;&lt;parsed&gt;&quot;,
+ &quot;status&quot;: &quot;&lt;parsed&gt;&quot;,
+ &quot;call_duration&quot;: &quot;&lt;computed&gt;&quot;,
+ &quot;Quality_of_Call&quot;: &quot;&lt;computed from transcript&gt;&quot;,
+ &quot;CallType&quot;: &quot;&lt;Inbound/Outbound&gt;&quot;,
+ &quot;Category&quot;: &quot;&lt;derived from transcript&gt;&quot;,
+
+ &quot;L1_Table&quot;: {
+  &quot;Yes&quot;: {
+   &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+  },
+  &quot;No&quot;: {
+   &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;reason for exclusion&gt;&quot;
+  }
+ },
+
+ &quot;L2_Table&quot;: {
+  &quot;Yes&quot;: {
+   &quot;3&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;18&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;19&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;25&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;26&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;39&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;&lt;any_other_found_L2_ID&gt;&quot;: &quot;&lt;answer&gt;&quot;
+  },
+  &quot;No&quot;: {
+   &quot;&lt;skipped L2_IDs&gt;&quot;: &quot;&lt;reason&gt;&quot;
+  }
+ },
+
+ &quot;L1_L2_Details&quot;: {
+  &quot;&lt;L1_ID&gt;&quot;: &quot;3&quot;,
+  &quot;&lt;L1_ID&gt;&quot;: &quot;18&quot;,
+  &quot;&lt;L1_ID&gt;&quot;: &quot;19&quot;,
+  &quot;&lt;L1_ID&gt;&quot;: &quot;25&quot;,
+  &quot;&lt;L1_ID&gt;&quot;: &quot;26&quot;,
+  &quot;&lt;L1_ID&gt;&quot;: &quot;39&quot;,
+  &quot;&lt;other L1_ID&gt;&quot;: &quot;&lt;L2_ID&gt;&quot;
+ },
+
+ &quot;Agent_Improvement_Insights&quot;: {
+  &quot;Opportunity&quot;: &quot;**Opportunity Title**: &lt;description&gt;&quot;,
+  &quot;Recommendation&quot;: &quot;&lt;practical advice&gt;&quot;,
+  &quot;Guidance&quot;: [
+   &quot;1) Suggestion one&quot;,
+   &quot;2) Suggestion two&quot;,
+   &quot;3) Suggestion three&quot;
+  ]
+ },
+
+ &quot;Process_Improvement_Insights&quot;: {
+  &quot;Opportunity&quot;: &quot;**Opportunity Title**: &lt;description&gt;&quot;,
+  &quot;Recommendation&quot;: &quot;&lt;scalable advice&gt;&quot;,
+  &quot;Guidance&quot;: [
+   &quot;1) Suggestion one&quot;,
+   &quot;2) Suggestion two&quot;,
+   &quot;3) Suggestion three&quot;
+  ]
+ }
+}
+
+</content>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_13</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ `{!$Input:CallLog.Name}`  
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- `&quot;Quality_of_Call&quot;` → analyze the transcript and rate out of 10 based on customer sentiment and satisfaction
+- `&quot;CallType&quot;` → analyze transcript: if agent initiates call → &quot;Outbound&quot;, else &quot;Inbound&quot;
+- `&quot;Category&quot;` → picklist from transcript: `&apos;Order Placement&apos;`, `&apos;Order Modification&apos;`, `&apos;General Enquiry&apos;`, `&apos;Dietician Assessment&apos;`, `&apos;Order Cancellation&apos;`. If unknown, default to `&apos;General Enquiry&apos;`
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Analyze {!$Input:Prompt_Summary_Setting.Summary_Text__c} for section:  
+**&quot;Agent Strengths and Development Needs:&quot;**  
+Extract all relevant L2 prompts and merge into a single `&quot;Agent_Improvement_Insights&quot;` object in the output.
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Analyze {!$Input:Prompt_Summary_Setting.Summary_Text__c} for section:  
+**&quot;Automation Opportunities:&quot;**  
+Extract all relevant L2 prompts and merge into a single `&quot;Process_Improvement_Insights&quot;` object in the output.
+
+---
+
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1/L2 mappings in:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+---
+
+#### 5.1: Identify all L1_IDs referenced in the transcript.
+
+#### 5.2: For each L1_ID:
+- Identify associated L2_IDs
+- For each L2_ID:
+ - If valid and mentioned in the transcript, extract a proper answer
+ - If L2_ID is one of `&apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;`:
+  - Always include in `&quot;L2_Table&quot; → &quot;Yes&quot;` even if not found in transcript
+  - If not found, generate a **positive, understandable fallback answer** like:
+   `&quot;Information not explicitly stated but assumed to be positive based on tone/context&quot;`
+  - Add its related L1_ID to `&quot;L1_Table&quot; → &quot;Yes&quot;`
+- Include **any other valid L2 answers** in `&quot;L2_Table&quot;` and assign L1_IDs in `&quot;L1_L2_Details&quot;`
+
+---
+
+### Final JSON Output Format
+
+```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+ &quot;phone_number&quot;: &quot;&lt;parsed from filename&gt;&quot;,
+ &quot;call_date&quot;: &quot;&lt;parsed&gt;&quot;,
+ &quot;start_time&quot;: &quot;&lt;parsed&gt;&quot;,
+ &quot;end_time&quot;: &quot;&lt;parsed&gt;&quot;,
+ &quot;status&quot;: &quot;&lt;parsed&gt;&quot;,
+ &quot;call_duration&quot;: &quot;&lt;computed&gt;&quot;,
+ &quot;Quality_of_Call&quot;: &quot;&lt;computed from transcript&gt;&quot;,
+ &quot;CallType&quot;: &quot;&lt;Inbound/Outbound&gt;&quot;,
+ &quot;Category&quot;: &quot;&lt;derived from transcript&gt;&quot;,
+
+ &quot;L1_Table&quot;: {
+  &quot;Yes&quot;: {
+   &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+  },
+  &quot;No&quot;: {
+   &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;reason for exclusion&gt;&quot;
+  }
+ },
+
+ &quot;L2_Table&quot;: {
+  &quot;Yes&quot;: {
+   &quot;3&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;18&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;19&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;25&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;26&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;39&quot;: &quot;&lt;answer or fallback&gt;&quot;,
+   &quot;&lt;any_other_found_L2_ID&gt;&quot;: &quot;&lt;answer&gt;&quot;
+  },
+  &quot;No&quot;: {
+   &quot;&lt;skipped L2_IDs&gt;&quot;: &quot;&lt;reason&gt;&quot;
+  }
+ },
+
+ &quot;L1_L2_Details&quot;: {
+  &quot;&lt;L1_ID&gt;&quot;: &quot;3&quot;,
+  &quot;&lt;L1_ID&gt;&quot;: &quot;18&quot;,
+  &quot;&lt;L1_ID&gt;&quot;: &quot;19&quot;,
+  &quot;&lt;L1_ID&gt;&quot;: &quot;25&quot;,
+  &quot;&lt;L1_ID&gt;&quot;: &quot;26&quot;,
+  &quot;&lt;L1_ID&gt;&quot;: &quot;39&quot;,
+  &quot;&lt;other L1_ID&gt;&quot;: &quot;&lt;L2_ID&gt;&quot;
+ },
+
+ &quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+}
+
+</content>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_14</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ {!$Input:CallLog.Name}
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- &apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others]
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Agent Strengths and Development Needs:&apos; prompt and find the L2 prompts related to this and then generate &quot;Agent_Improvement_Insights&quot; in the output JSON if find multiple &quot;Agent_Improvement_Insights&quot; merge all and make it ones
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Automation Opportunities:&apos; prompt and find the L2 prompts related to this and then generate &quot;Process_Improvement_Insights&quot; in the output JSON if find multiple &quot;Process_Improvement_Insights&quot; merge all and make it ones
+
+---
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1 and L2 category mappings here:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+#### 5.1: Identify all relevant L1_IDs discussed in the transcript.
+#### 5.2: Always include &apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;` L2_Ids in the &quot;L2 table&quot; &quot;Yes&quot; section and in each time those should be included.... also add the related L1_Ids in the &apos;L1 Table&apos;
+#### 5.3: For each L1_ID:
+- Identify all associated L2_IDs
+- For each L2_ID:
+ - If the answer is valid and mentioned in the conversation (not `&quot;No&quot;`, `&quot;null&quot;`, or missing), include it and give a proper answer by analyzing from the transcript in the bellow json and in the &quot;L1_L2_Details&quot; table there should be all L2 answers from the &quot;L2_Table&quot;-&quot;Yes&quot; section and include those with their related L1 prompt (Example - If there are 01, 02, 03 L2 prompt found in the &quot;L2_Table&quot; &quot;Yes&quot; section for that add them Like &quot;P1&quot;: &quot;01&quot;,&quot;P1&quot;: &quot;02&quot;,&quot;P1&quot;: &quot;03&quot; etc ) in the &quot;L1_L2_Details&quot; section there should be same no of records presents in the &quot;L2_Table&quot; - &quot;Yes&quot; Section:
+ ```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+&quot;phone_number&quot;` → first section
+&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+ &quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+&quot;status&quot;` → fifth section
+&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+&apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others],
+&quot;CallType&quot; - &quot;Check from the transcript and find this call is &apos;Inbound&apos; or &apos;Outbound&apos;, Check from the conversation in a agent is calling to the clint then it should be outbound otherwise it should be inbound&quot;,
+&quot;Category&quot; - &quot;Analyze and check the Category of the call it should be from the picklist values -  &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;(If the category is not found put as - &apos;General Enquiry&apos;)
+&quot;
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+&quot;&lt;L1s with at least one valid L2&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+},
+&quot;No&quot;: {
+&quot;&lt;L1s with only invalid or missing L2s&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+}
+ },
+ &quot;L2_Table&quot;: {
+ &quot;Yes&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+ ...
+ },
+ &quot;No&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;description or reason&gt;&quot;,
+ ...
+ }
+ },
+&quot;L1_L2_Details&quot; : {
+&lt;L1_ID&gt; : &lt;L2_ID&gt;
+}
+&quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+  &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+  &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+ }
+
+}
+
+#### 5.4: Classify L1_IDs
+- If **at least one valid L2_ID** exists, put the L1_ID in:
+ ```json
+ &quot;L1_Table&quot;: {
+  &quot;Yes&quot;: {
+   &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+  }
+
+
+
+
+</content>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_15</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ {!$Input:CallLog.Name}
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- &apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others]
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Agent Strengths and Development Needs:&apos; prompt and find the L2 prompts related to this and then generate &quot;Agent_Improvement_Insights&quot; in the output JSON if find multiple &quot;Agent_Improvement_Insights&quot; merge all and make it ones
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Automation Opportunities:&apos; prompt and find the L2 prompts related to this and then generate &quot;Process_Improvement_Insights&quot; in the output JSON if find multiple &quot;Process_Improvement_Insights&quot; merge all and make it ones
+
+---
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1 and L2 category mappings here:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+#### 5.1: Identify all relevant L1_IDs discussed in the transcript.
+#### 5.2: Always include &apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;` L2_Ids in the &quot;L2 table&quot; &quot;Yes&quot; section and in each time those should be included.... also add the related L1_Ids in the &apos;L1 Table&apos;
+#### 5.3: For each L1_ID:
+- Identify all associated L2_IDs
+- For each L2_ID:
+ - If the answer is valid and mentioned in the conversation (not `&quot;No&quot;`, `&quot;null&quot;`, or missing), include it and give a proper answer by analyzing from the transcript in the bellow json and in the &quot;L1_L2_Details&quot; table there should be all L2 answers from the &quot;L2_Table&quot;-&quot;Yes&quot; section and include those with their related L1 prompt (Example - If there are 01, 02, 03 L2 prompt found in the &quot;L2_Table&quot; &quot;Yes&quot; section for that add them Like &quot;P1&quot;: &quot;01&quot;,&quot;P1&quot;: &quot;02&quot;,&quot;P1&quot;: &quot;03&quot; etc ) in the &quot;L1_L2_Details&quot; section there should be same no of records presents in the &quot;L2_Table&quot; - &quot;Yes&quot; Section:
+ ```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+&quot;phone_number&quot;` → first section
+&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+ &quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+&quot;status&quot;` → fifth section
+&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+&apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others],
+&quot;CallType&quot; - &quot;Check from the transcript and find this call is &apos;Inbound&apos; or &apos;Outbound&apos;, Check from the conversation in a agent is calling to the clint then it should be outbound otherwise it should be inbound&quot;,
+&quot;Category&quot; - &quot;Analyze and check the Category of the call it should be from the picklist values -  &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;(If the category is not found put as - &apos;General Enquiry&apos;)
+&quot;Client_Preferred_Price_Range&quot; - &quot;Analyze and check the Client_Preferred_Price_Range from the call it should be from the picklist values - &quot;Below ₹20 Lakhs&quot;, &quot;₹20 Lakhs – ₹40 Lakhs&quot;, &quot;₹40 Lakhs – ₹60 Lakhs&quot;, &quot;₹60 Lakhs – ₹80 Lakhs&quot;, &quot;₹80 Lakhs – ₹1 Crore&quot;, &quot;₹1 Crore – ₹1.5 Crore&quot;, &quot;₹1.5 Crore – ₹2 Crore&quot;, &quot;₹2 Crore – ₹3 Crore&quot;, &quot;Above ₹3 Crore&quot;, &quot;Not Mentioned&quot; if do not find any price range give the default value &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Client_Preferred_Location&quot; - &quot;From the call transcript, identify the main location the client is looking to buy a property in. Return only the location name (e.g., Rajarhat, EM Bypass, etc.) without any explanation or sentence. If multiple locations are mentioned, return the most preferred or most discussed one. if Location is not mentioned answer should be &apos;All Over Kolkata&apos; &quot;
+&quot;Client_Preferred_Unit_Type&quot; - &quot;Analyze and check the Client_Preferred_Unit_Type from the call it should be from the picklist values - &quot;Studio Apartment&quot;, &quot;1 BHK&quot;, &quot;2 BHK&quot;, &quot;3 BHK&quot;, &quot;4 BHK&quot;, &quot;Penthouse&quot;, &quot;Villa&quot;, &quot;Row House&quot;, &quot;Duplex&quot;, &quot;Plot / Land&quot;, &quot;Commercial Space&quot;, &quot;Farmhouse&quot;, &quot;Serviced Apartment&quot;, &quot;Other&quot;, &quot;Not Mentioned&quot; if do not find any unit type give the default &quot;Not Mentioned&quot; as a answer&quot;
+&quot;
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+&quot;&lt;L1s with at least one valid L2&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+},
+&quot;No&quot;: {
+&quot;&lt;L1s with only invalid or missing L2s&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+}
+ },
+ &quot;L2_Table&quot;: {
+ &quot;Yes&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+ ...
+ },
+ &quot;No&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;description or reason&gt;&quot;,
+ ...
+ }
+ },
+&quot;L1_L2_Details&quot; : {
+&lt;L1_ID&gt; : &lt;L2_ID&gt;
+}
+&quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+  &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+  &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+ }
+
+}
+
+#### 5.4: Classify L1_IDs
+- If **at least one valid L2_ID** exists, put the L1_ID in:
+ ```json
+ &quot;L1_Table&quot;: {
+  &quot;Yes&quot;: {
+   &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+  }
+
+
+
+
+</content>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_16</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ {!$Input:CallLog.Name}
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- &apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others]
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Agent Strengths and Development Needs:&apos; prompt and find the L2 prompts related to this and then generate &quot;Agent_Improvement_Insights&quot; in the output JSON if find multiple &quot;Agent_Improvement_Insights&quot; merge all and make it ones
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Automation Opportunities:&apos; prompt and find the L2 prompts related to this and then generate &quot;Process_Improvement_Insights&quot; in the output JSON if find multiple &quot;Process_Improvement_Insights&quot; merge all and make it ones
+
+---
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1 and L2 category mappings here:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+#### 5.1: Identify all relevant L1_IDs discussed in the transcript.
+#### 5.2: Always include &apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;` L2_Ids in the &quot;L2 table&quot; &quot;Yes&quot; section and in each time those should be included.... also add the related L1_Ids in the &apos;L1 Table&apos;
+#### 5.3: For each L1_ID:
+- Identify all associated L2_IDs
+- For each L2_ID:
+ - If the answer is valid and mentioned in the conversation (not `&quot;No&quot;`, `&quot;null&quot;`, or missing), include it and give a proper answer by analyzing from the transcript in the bellow json and in the &quot;L1_L2_Details&quot; table there should be all L2 answers from the &quot;L2_Table&quot;-&quot;Yes&quot; section and include those with their related L1 prompt (Example - If there are 01, 02, 03 L2 prompt found in the &quot;L2_Table&quot; &quot;Yes&quot; section for that add them Like &quot;P1&quot;: &quot;01&quot;,&quot;P1&quot;: &quot;02&quot;,&quot;P1&quot;: &quot;03&quot; etc ) in the &quot;L1_L2_Details&quot; section there should be same no of records presents in the &quot;L2_Table&quot; - &quot;Yes&quot; Section:
+ ```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+&quot;phone_number&quot;` → first section
+&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+ &quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+&quot;status&quot;` → fifth section
+&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+&apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others],
+&quot;CallType&quot; - &quot;Check from the transcript and find this call is &apos;Inbound&apos; or &apos;Outbound&apos;, Check from the conversation in a agent is calling to the clint then it should be outbound otherwise it should be inbound&quot;,
+&quot;Category&quot; - &quot;Analyze and check the Category of the call it should be from the picklist values -  &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;(If the category is not found put as - &apos;General Enquiry&apos;)
+&quot;Client_Preferred_Price_Range&quot; - &quot;Analyze and check the Client_Preferred_Price_Range from the call it should be from the picklist values - &quot;Below ₹20 Lakhs&quot;, &quot;₹20 Lakhs – ₹40 Lakhs&quot;, &quot;₹40 Lakhs – ₹60 Lakhs&quot;, &quot;₹60 Lakhs – ₹80 Lakhs&quot;, &quot;₹80 Lakhs – ₹1 Crore&quot;, &quot;₹1 Crore – ₹1.5 Crore&quot;, &quot;₹1.5 Crore – ₹2 Crore&quot;, &quot;₹2 Crore – ₹3 Crore&quot;, &quot;Above ₹3 Crore&quot;, &quot;Not Mentioned&quot; if do not find any price range give the default value &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Client_Preferred_Location&quot; - &quot;From the call transcript, identify the main location the client is looking to buy a property in. Return only the location name (e.g., Rajarhat, EM Bypass, etc.) without any explanation or sentence. If multiple locations are mentioned, return the most preferred or most discussed one. if Location is not mentioned answer should be &apos;All Over Kolkata&apos; &quot;
+&quot;Client_Preferred_Unit_Type&quot; - &quot;Analyze and check the Client_Preferred_Unit_Type from the call it should be from the picklist values - &quot;Studio Apartment&quot;, &quot;1 BHK&quot;, &quot;2 BHK&quot;, &quot;3 BHK&quot;, &quot;4 BHK&quot;, &quot;Penthouse&quot;, &quot;Villa&quot;, &quot;Row House&quot;, &quot;Duplex&quot;, &quot;Plot / Land&quot;, &quot;Commercial Space&quot;, &quot;Farmhouse&quot;, &quot;Serviced Apartment&quot;, &quot;Other&quot;, &quot;Not Mentioned&quot; if do not find any unit type give the default &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Need_Escalation&quot; - &quot;From the call transcript, identify if the call led to any escalation or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;Call_Satisfied&quot; - &quot;From the call transcript, identify if the the client is satisfied or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;Call_Put_On_Hold&quot; - &quot;From the call transcript, identify if the call is put on hold or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+&quot;&lt;L1s with at least one valid L2&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+},
+&quot;No&quot;: {
+&quot;&lt;L1s with only invalid or missing L2s&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+}
+ },
+ &quot;L2_Table&quot;: {
+ &quot;Yes&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+ ...
+ },
+ &quot;No&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;description or reason&gt;&quot;,
+ ...
+ }
+ },
+&quot;L1_L2_Details&quot; : {
+&lt;L1_ID&gt; : &lt;L2_ID&gt;
+}
+&quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+  &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+  &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+ }
+
+}
+
+#### 5.4: Classify L1_IDs
+- If **at least one valid L2_ID** exists, put the L1_ID in:
+ ```json
+ &quot;L1_Table&quot;: {
+  &quot;Yes&quot;: {
+   &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+  }
+
+
+
+
+</content>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_17</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ {!$Input:CallLog.Name}
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- &apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others]
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Agent Strengths and Development Needs:&apos; prompt and find the L2 prompts related to this and then generate &quot;Agent_Improvement_Insights&quot; in the output JSON if find multiple &quot;Agent_Improvement_Insights&quot; merge all and make it ones
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Automation Opportunities:&apos; prompt and find the L2 prompts related to this and then generate &quot;Process_Improvement_Insights&quot; in the output JSON if find multiple &quot;Process_Improvement_Insights&quot; merge all and make it ones
+
+---
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1 and L2 category mappings here:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+#### 5.1: Identify all relevant L1_IDs discussed in the transcript.
+#### 5.2: Always include &apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;` L2_Ids in the &quot;L2 table&quot; &quot;Yes&quot; section and in each time those should be included.... also add the related L1_Ids in the &apos;L1 Table&apos;
+#### 5.3: For each L1_ID:
+- Identify all associated L2_IDs
+- For each L2_ID:
+ - If the answer is valid and mentioned in the conversation (not `&quot;No&quot;`, `&quot;null&quot;`, or missing), include it and give a proper answer by analyzing from the transcript in the bellow json and in the &quot;L1_L2_Details&quot; table there should be all L2 answers from the &quot;L2_Table&quot;-&quot;Yes&quot; section and include those with their related L1 prompt (Example - If there are 01, 02, 03 L2 prompt found in the &quot;L2_Table&quot; &quot;Yes&quot; section for that add them Like &quot;P1&quot;: &quot;01&quot;,&quot;P1&quot;: &quot;02&quot;,&quot;P1&quot;: &quot;03&quot; etc ) in the &quot;L1_L2_Details&quot; section there should be same no of records presents in the &quot;L2_Table&quot; - &quot;Yes&quot; Section:
+ ```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+&quot;phone_number&quot;` → first section
+&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+ &quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+&quot;status&quot;` → fifth section
+&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+&apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others],
+&quot;CallType&quot; - &quot;Check from the transcript and find this call is &apos;Inbound&apos; or &apos;Outbound&apos;, Check from the conversation in a agent is calling to the clint then it should be outbound otherwise it should be inbound&quot;,
+&quot;Category&quot; - &quot;Analyze and check the Category of the call it should be from the picklist values -  &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;(If the category is not found put as - &apos;General Enquiry&apos;)
+&quot;Client_Preferred_Price_Range&quot; - &quot;Analyze and check the Client_Preferred_Price_Range from the call it should be from the picklist values - &quot;Below ₹19 Lakhs&quot;, &quot;₹20 Lakhs – ₹40 Lakhs&quot;, &quot;₹41 Lakhs – ₹60 Lakhs&quot;, &quot;₹61 Lakhs – ₹80 Lakhs&quot;, &quot;₹81 Lakhs – ₹1.1 Crore&quot;, &quot;₹1.2 Crore – ₹1.9 Crore&quot;, &quot;₹2 Crore – ₹2.9 Crore&quot;, &quot;₹3 Crore – ₹3.5 Crore&quot;, &quot;Above ₹3.6 Crore&quot;, &quot;Not Mentioned&quot; if do not find any price range give the default value &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Client_Preferred_Location&quot; - &quot;From the call transcript, identify the main location the client is looking to buy a property in. Return only the location name (e.g., Rajarhat, EM Bypass, etc.) without any explanation or sentence. If multiple locations are mentioned, return the most preferred or most discussed one. if Location is not mentioned answer should be &apos;All Over Kolkata&apos; &quot;
+&quot;Client_Preferred_Unit_Type&quot; - &quot;Analyze and check the Client_Preferred_Unit_Type from the call it should be from the picklist values - &quot;Studio Apartment&quot;, &quot;1 BHK&quot;, &quot;2 BHK&quot;, &quot;3 BHK&quot;, &quot;4 BHK&quot;, &quot;Penthouse&quot;, &quot;Villa&quot;, &quot;Row House&quot;, &quot;Duplex&quot;, &quot;Plot / Land&quot;, &quot;Commercial Space&quot;, &quot;Farmhouse&quot;, &quot;Serviced Apartment&quot;, &quot;Other&quot;, &quot;Not Mentioned&quot; if do not find any unit type give the default &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Need_Escalation&quot; - &quot;From the call transcript, identify if the call led to any escalation or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;Call_Satisfied&quot; - &quot;From the call transcript, identify if the the client is satisfied or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;Call_Put_On_Hold&quot; - &quot;From the call transcript, identify if the call is put on hold or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+&quot;&lt;L1s with at least one valid L2&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+},
+&quot;No&quot;: {
+&quot;&lt;L1s with only invalid or missing L2s&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+}
+ },
+ &quot;L2_Table&quot;: {
+ &quot;Yes&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+ ...
+ },
+ &quot;No&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;description or reason&gt;&quot;,
+ ...
+ }
+ },
+&quot;L1_L2_Details&quot; : {
+&lt;L1_ID&gt; : &lt;L2_ID&gt;
+}
+&quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+  &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+  &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+ }
+
+}
+
+#### 5.4: Classify L1_IDs
+- If **at least one valid L2_ID** exists, put the L1_ID in:
+ ```json
+ &quot;L1_Table&quot;: {
+  &quot;Yes&quot;: {
+   &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+  }
+
+
+
+
+</content>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_18</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ {!$Input:CallLog.Name}
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- &apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others]
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Agent Strengths and Development Needs:&apos; prompt and find the L2 prompts related to this and then generate &quot;Agent_Improvement_Insights&quot; in the output JSON if find multiple &quot;Agent_Improvement_Insights&quot; merge all and make it ones
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Automation Opportunities:&apos; prompt and find the L2 prompts related to this and then generate &quot;Process_Improvement_Insights&quot; in the output JSON if find multiple &quot;Process_Improvement_Insights&quot; merge all and make it ones
+
+---
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1 and L2 category mappings here:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+#### 5.1: Identify all relevant L1_IDs discussed in the transcript.
+#### 5.2: Always include &apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;` L2_Ids in the &quot;L2 table&quot; &quot;Yes&quot; section and in each time those should be included.... also add the related L1_Ids in the &apos;L1 Table&apos;
+#### 5.3: For each L1_ID:
+- Identify all associated L2_IDs
+- For each L2_ID:
+ - If the answer is valid and mentioned in the conversation (not `&quot;No&quot;`, `&quot;null&quot;`, or missing), include it and give a proper answer by analyzing from the transcript in the bellow json and in the &quot;L1_L2_Details&quot; table there should be all L2 answers from the &quot;L2_Table&quot;-&quot;Yes&quot; section and include those with their related L1 prompt (Example - If there are 01, 02, 03 L2 prompt found in the &quot;L2_Table&quot; &quot;Yes&quot; section for that add them Like &quot;P1&quot;: &quot;01&quot;,&quot;P1&quot;: &quot;02&quot;,&quot;P1&quot;: &quot;03&quot; etc ) in the &quot;L1_L2_Details&quot; section there should be same no of records presents in the &quot;L2_Table&quot; - &quot;Yes&quot; Section:
+ ```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+&quot;phone_number&quot;` → first section
+&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+ &quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+&quot;status&quot;` → fifth section
+&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+&apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others],
+&quot;CallType&quot; - &quot;Check from the transcript and find this call is &apos;Inbound&apos; or &apos;Outbound&apos;, Check from the conversation in a agent is calling to the clint then it should be outbound otherwise it should be inbound&quot;,
+&quot;Category&quot; - &quot;Analyze and check the Category of the call it should be from the picklist values -  &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;(If the category is not found put as - &apos;General Enquiry&apos;)
+&quot;Client_Preferred_Price_Range&quot; - &quot;Analyze and check the Client_Preferred_Price_Range from the call it should be from the picklist values - &quot;Below ₹19 Lakhs&quot;, &quot;₹20 Lakhs – ₹40 Lakhs&quot;, &quot;₹41 Lakhs – ₹60 Lakhs&quot;, &quot;₹61 Lakhs – ₹80 Lakhs&quot;, &quot;₹81 Lakhs – ₹1.1 Crore&quot;, &quot;₹1.2 Crore – ₹1.9 Crore&quot;, &quot;₹2 Crore – ₹2.9 Crore&quot;, &quot;₹3 Crore – ₹3.5 Crore&quot;, &quot;Above ₹3.6 Crore&quot;, &quot;Not Mentioned&quot; if do not find any price range give the default value &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Client_Preferred_Location&quot; - &quot;From the call transcript, identify the main location the client is looking to buy a property in. Return only the location name (e.g., Rajarhat, EM Bypass, etc.) without any explanation or sentence. If multiple locations are mentioned, return the most preferred or most discussed one. if Location is not mentioned answer should be &apos;All Over Kolkata&apos; &quot;
+&quot;Client_Preferred_Unit_Type&quot; - &quot;Analyze and check the Client_Preferred_Unit_Type from the call it should be from the picklist values - &quot;Studio Apartment&quot;, &quot;1 BHK&quot;, &quot;2 BHK&quot;, &quot;3 BHK&quot;, &quot;4 BHK&quot;, &quot;Penthouse&quot;, &quot;Villa&quot;, &quot;Row House&quot;, &quot;Duplex&quot;, &quot;Plot / Land&quot;, &quot;Commercial Space&quot;, &quot;Farmhouse&quot;, &quot;Serviced Apartment&quot;, &quot;Other&quot;, &quot;Not Mentioned&quot; if do not find any unit type give the default &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Need_Escalation&quot; - &quot;From the call transcript, identify if the call led to any escalation or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;Call_Satisfied&quot; - &quot;From the call transcript, identify if the the client is satisfied, partially satisfied or not satisfied, give the answer as &quot;Yes&quot; or &quot;Partially&quot; or &quot;No&quot;&quot;
+&quot;Call_Put_On_Hold&quot; - &quot;From the call transcript, identify if the call is put on hold or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+&quot;&lt;L1s with at least one valid L2&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+},
+&quot;No&quot;: {
+&quot;&lt;L1s with only invalid or missing L2s&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+}
+ },
+ &quot;L2_Table&quot;: {
+ &quot;Yes&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+ ...
+ },
+ &quot;No&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;description or reason&gt;&quot;,
+ ...
+ }
+ },
+&quot;L1_L2_Details&quot; : {
+&lt;L1_ID&gt; : &lt;L2_ID&gt;
+}
+&quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+  &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+  &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+ }
+
+}
+
+#### 5.4: Classify L1_IDs
+- If **at least one valid L2_ID** exists, put the L1_ID in:
+ ```json
+ &quot;L1_Table&quot;: {
+  &quot;Yes&quot;: {
+   &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+  }
+
+
+
+
+</content>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_19</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ {!$Input:CallLog.Name}
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- &apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others]
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Agent Strengths and Development Needs:&apos; prompt and find the L2 prompts related to this and then generate &quot;Agent_Improvement_Insights&quot; in the output JSON if find multiple &quot;Agent_Improvement_Insights&quot; merge all and make it ones
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Automation Opportunities:&apos; prompt and find the L2 prompts related to this and then generate &quot;Process_Improvement_Insights&quot; in the output JSON if find multiple &quot;Process_Improvement_Insights&quot; merge all and make it ones
+
+---
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1 and L2 category mappings here:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+#### 5.1: Identify all relevant L1_IDs discussed in the transcript.
+#### 5.2: Always include &apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;` L2_Ids in the &quot;L2 table&quot; &quot;Yes&quot; section and in each time those should be included.... also add the related L1_Ids in the &apos;L1 Table&apos;
+#### 5.3: For each L1_ID:
+- Identify all associated L2_IDs
+- For each L2_ID:
+ - If the answer is valid and mentioned in the conversation (not `&quot;No&quot;`, `&quot;null&quot;`, or missing), include it and give a proper answer by analyzing from the transcript in the bellow json and in the &quot;L1_L2_Details&quot; table there should be all L2 answers from the &quot;L2_Table&quot;-&quot;Yes&quot; section and include those with their related L1 prompt (Example - If there are 01, 02, 03 L2 prompt found in the &quot;L2_Table&quot; &quot;Yes&quot; section for that add them Like &quot;P1&quot;: &quot;01&quot;,&quot;P1&quot;: &quot;02&quot;,&quot;P1&quot;: &quot;03&quot; etc ) in the &quot;L1_L2_Details&quot; section there should be same no of records presents in the &quot;L2_Table&quot; - &quot;Yes&quot; Section:
+ ```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+&quot;phone_number&quot;` → first section
+&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+ &quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+&quot;status&quot;` → fifth section
+&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+&apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others],
+&quot;CallType&quot; - &quot;Check from the transcript and find this call is &apos;Inbound&apos; or &apos;Outbound&apos;, Check from the conversation in a agent is calling to the clint then it should be outbound otherwise it should be inbound&quot;,
+&quot;Category&quot; - &quot;Analyze and check the Category of the call it should be from the picklist values - &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;(If the category is not found put as - &apos;General Enquiry&apos;)
+&quot;Client_Preferred_Price_Range&quot; - &quot;Analyze and check the Client_Preferred_Price_Range from the call it should be from the picklist values - &quot;Below ₹19 Lakhs&quot;, &quot;₹20 Lakhs – ₹40 Lakhs&quot;, &quot;₹41 Lakhs – ₹60 Lakhs&quot;, &quot;₹61 Lakhs – ₹80 Lakhs&quot;, &quot;₹81 Lakhs – ₹1.1 Crore&quot;, &quot;₹1.2 Crore – ₹1.9 Crore&quot;, &quot;₹2 Crore – ₹2.9 Crore&quot;, &quot;₹3 Crore – ₹3.5 Crore&quot;, &quot;Above ₹3.6 Crore&quot;, &quot;Not Mentioned&quot; if do not find any price range give the default value &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Client_Preferred_Location&quot; - &quot;From the call transcript, identify the main location the client is looking to buy a property in. Return only the location name (e.g., Rajarhat, EM Bypass, etc.) without any explanation or sentence. If multiple locations are mentioned, return the most preferred or most discussed one. if Location is not mentioned answer should be &apos;All Over Kolkata&apos; &quot;
+&quot;Client_Preferred_Unit_Type&quot; - &quot;Analyze and check the Client_Preferred_Unit_Type from the call it should be from the picklist values - &quot;Studio Apartment&quot;, &quot;1 BHK&quot;, &quot;2 BHK&quot;, &quot;3 BHK&quot;, &quot;4 BHK&quot;, &quot;Penthouse&quot;, &quot;Villa&quot;, &quot;Row House&quot;, &quot;Duplex&quot;, &quot;Plot / Land&quot;, &quot;Commercial Space&quot;, &quot;Farmhouse&quot;, &quot;Serviced Apartment&quot;, &quot;Other&quot;, &quot;Not Mentioned&quot; if do not find any unit type give the default &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Need_Escalation&quot; - &quot;From the call transcript, identify if the call led to any escalation or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;Call_Satisfied&quot; - &quot;From the call transcript, identify if the the client is satisfied, partially satisfied or not satisfied, give the answer as &quot;Yes&quot; or &quot;Partially&quot; or &quot;No&quot;&quot;
+&quot;Call_Put_On_Hold&quot; - From the call transcript, determine if at any point the agent puts the customer on hold, asks them to wait, OR implies a pause to check something and then return, even if words like &quot;hold&quot; or &quot;wait&quot; are not explicitly used. This includes implied holds such as: &quot;আমি চেক করে আসছি&quot;, &quot;let me check and get back&quot;, &quot;checking the availability&quot;, &quot;thank you for holding&quot;, or any statement where the agent temporarily suspends the conversation to verify something. Answer only &quot;Yes&quot; if such an event occurs, otherwise answer &quot;No&quot;.
+&quot;
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+&quot;&lt;L1s with at least one valid L2&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+},
+&quot;No&quot;: {
+&quot;&lt;L1s with only invalid or missing L2s&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+}
+ },
+ &quot;L2_Table&quot;: {
+ &quot;Yes&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+ ...
+ },
+ &quot;No&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;description or reason&gt;&quot;,
+ ...
+ }
+ },
+&quot;L1_L2_Details&quot; : {
+&lt;L1_ID&gt; : &lt;L2_ID&gt;
+}
+&quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+ }
+
+}
+
+#### 5.4: Classify L1_IDs
+- If **at least one valid L2_ID** exists, put the L1_ID in:
+ ```json
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+  &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+ }
+
+
+
+</content>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_20</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ {!$Input:CallLog.Name}
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- &apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others]
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Agent Strengths and Development Needs:&apos; prompt and find the L2 prompts related to this and then generate &quot;Agent_Improvement_Insights&quot; in the output JSON if find multiple &quot;Agent_Improvement_Insights&quot; merge all and make it ones
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Automation Opportunities:&apos; prompt and find the L2 prompts related to this and then generate &quot;Process_Improvement_Insights&quot; in the output JSON if find multiple &quot;Process_Improvement_Insights&quot; merge all and make it ones
+
+---
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1 and L2 category mappings here:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+#### 5.1: Identify all relevant L1_IDs discussed in the transcript.
+#### 5.2: Always include &apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;` L2_Ids in the &quot;L2 table&quot; &quot;Yes&quot; section and in each time those should be included.... also add the related L1_Ids in the &apos;L1 Table&apos;
+#### 5.3: For each L1_ID:
+- Identify all associated L2_IDs
+- For each L2_ID:
+ - If the answer is valid and mentioned in the conversation (not `&quot;No&quot;`, `&quot;null&quot;`, or missing), include it and give a proper answer by analyzing from the transcript in the bellow json and in the &quot;L1_L2_Details&quot; table there should be all L2 answers from the &quot;L2_Table&quot;-&quot;Yes&quot; section and include those with their related L1 prompt (Example - If there are 01, 02, 03 L2 prompt found in the &quot;L2_Table&quot; &quot;Yes&quot; section for that add them Like &quot;P1&quot;: &quot;01&quot;,&quot;P1&quot;: &quot;02&quot;,&quot;P1&quot;: &quot;03&quot; etc ) in the &quot;L1_L2_Details&quot; section there should be same no of records presents in the &quot;L2_Table&quot; - &quot;Yes&quot; Section:
+ ```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+&quot;phone_number&quot;` → first section
+&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+ &quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+&quot;status&quot;` → fifth section
+&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+&apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others],
+&quot;CallType&quot; - &quot;Check from the transcript and find this call is &apos;Inbound&apos; or &apos;Outbound&apos;, Check from the conversation in a agent is calling to the clint then it should be outbound otherwise it should be inbound&quot;,
+&quot;Category&quot; - &quot;Analyze and check the Category of the call it should be from the picklist values -  &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;(If the category is not found put as - &apos;General Enquiry&apos;)
+&quot;Client_Preferred_Price_Range&quot; - &quot;Analyze and check the Client_Preferred_Price_Range from the call it should be from the picklist values - &quot;Below ₹19 Lakhs&quot;, &quot;₹20 Lakhs – ₹40 Lakhs&quot;, &quot;₹41 Lakhs – ₹60 Lakhs&quot;, &quot;₹61 Lakhs – ₹80 Lakhs&quot;, &quot;₹81 Lakhs – ₹1.1 Crore&quot;, &quot;₹1.2 Crore – ₹1.9 Crore&quot;, &quot;₹2 Crore – ₹2.9 Crore&quot;, &quot;₹3 Crore – ₹3.5 Crore&quot;, &quot;Above ₹3.6 Crore&quot;, &quot;Not Mentioned&quot; if do not find any price range give the default value &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Client_Preferred_Location&quot; - &quot;From the call transcript, identify the main location the client is looking to buy a property in. Return only the location name (e.g., Rajarhat, EM Bypass, etc.) without any explanation or sentence. If multiple locations are mentioned, return the most preferred or most discussed one. if Location is not mentioned answer should be &apos;All Over Kolkata&apos; &quot;
+&quot;Client_Preferred_Unit_Type&quot; - &quot;Analyze and check the Client_Preferred_Unit_Type from the call it should be from the picklist values - &quot;Studio Apartment&quot;, &quot;1 BHK&quot;, &quot;2 BHK&quot;, &quot;3 BHK&quot;, &quot;4 BHK&quot;, &quot;Penthouse&quot;, &quot;Villa&quot;, &quot;Row House&quot;, &quot;Duplex&quot;, &quot;Plot / Land&quot;, &quot;Commercial Space&quot;, &quot;Farmhouse&quot;, &quot;Serviced Apartment&quot;, &quot;Other&quot;, &quot;Not Mentioned&quot; if do not find any unit type give the default &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Need_Escalation&quot; - &quot;From the call transcript, identify if the call led to any escalation or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;Call_Satisfied&quot; - &quot;From the call transcript, identify if the the client is satisfied, partially satisfied or not satisfied, give the answer as &quot;Yes&quot; or &quot;Partially&quot; or &quot;No&quot;&quot;
+&quot;Call_Put_On_Hold&quot; - From the call transcript, determine if at any point the agent puts the customer on hold, asks them to wait, OR implies a pause to check something and then return, even if words like &quot;hold&quot; or &quot;wait&quot; are not explicitly used. This includes implied holds such as: &quot;আমি চেক করে আসছি&quot;, &quot;let me check and get back&quot;, &quot;checking the availability&quot;, &quot;thank you for holding&quot;, or any statement where the agent temporarily suspends the conversation to verify something. Answer only &quot;Yes&quot; if such an event occurs, otherwise answer &quot;No&quot;.
+&quot;
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+&quot;&lt;L1s with at least one valid L2&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+},
+&quot;No&quot;: {
+&quot;&lt;L1s with only invalid or missing L2s&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+}
+ },
+ &quot;L2_Table&quot;: {
+ &quot;Yes&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+ ...
+ },
+ &quot;No&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;description or reason&gt;&quot;,
+ ...
+ }
+ },
+&quot;L1_L2_Details&quot; : {
+&lt;L1_ID&gt; : &lt;L2_ID&gt;
+}
+&quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+  &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+  &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+ }
+
+}
+
+#### 5.4: Classify L1_IDs
+- If **at least one valid L2_ID** exists, put the L1_ID in:
+ ```json
+ &quot;L1_Table&quot;: {
+  &quot;Yes&quot;: {
+   &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+  }
+
+
+
+
+</content>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_21</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ {!$Input:CallLog.Name}
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- &apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others]
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Agent Strengths and Development Needs:&apos; prompt and find the L2 prompts related to this and then generate &quot;Agent_Improvement_Insights&quot; in the output JSON if find multiple &quot;Agent_Improvement_Insights&quot; merge all and make it ones
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Automation Opportunities:&apos; prompt and find the L2 prompts related to this and then generate &quot;Process_Improvement_Insights&quot; in the output JSON if find multiple &quot;Process_Improvement_Insights&quot; merge all and make it ones
+
+---
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1 and L2 category mappings here:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+#### 5.1: Identify all relevant L1_IDs discussed in the transcript.
+#### 5.2: Always include &apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;` L2_Ids in the &quot;L2 table&quot; &quot;Yes&quot; section and in each time those should be included.... also add the related L1_Ids in the &apos;L1 Table&apos;
+#### 5.3: For each L1_ID:
+- Identify all associated L2_IDs
+- For each L2_ID:
+ - If the answer is valid and mentioned in the conversation (not `&quot;No&quot;`, `&quot;null&quot;`, or missing), include it and give a proper answer by analyzing from the transcript in the bellow json and in the &quot;L1_L2_Details&quot; table there should be all L2 answers from the &quot;L2_Table&quot;-&quot;Yes&quot; section and include those with their related L1 prompt (Example - If there are 01, 02, 03 L2 prompt found in the &quot;L2_Table&quot; &quot;Yes&quot; section for that add them Like &quot;P1&quot;: &quot;01&quot;,&quot;P1&quot;: &quot;02&quot;,&quot;P1&quot;: &quot;03&quot; etc ) in the &quot;L1_L2_Details&quot; section there should be same no of records presents in the &quot;L2_Table&quot; - &quot;Yes&quot; Section:
+ ```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+&quot;phone_number&quot;` → first section
+&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+ &quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+&quot;status&quot;` → fifth section
+&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+&apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others],
+&quot;CallType&quot; - &quot;Check from the transcript and find this call is &apos;Inbound&apos; or &apos;Outbound&apos;, Check from the conversation in a agent is calling to the clint then it should be outbound otherwise it should be inbound&quot;,
+&quot;Category&quot; - &quot;Analyze and check the Category of the call it should be from the picklist values - &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;(If the category is not found put as - &apos;General Enquiry&apos;)
+&quot;Client_Preferred_Price_Range&quot; - &quot;From the call transcript, determine the Client_Preferred_Price_Range by identifying the price range mentioned for the unit the client shows interest in.
+Map the price to only one of the following picklist values:
+&quot;Below ₹19 Lakhs&quot;
+&quot;₹20 Lakhs – ₹40 Lakhs&quot;
+&quot;₹41 Lakhs – ₹60 Lakhs&quot;
+&quot;₹61 Lakhs – ₹80 Lakhs&quot;
+&quot;₹81 Lakhs – ₹1.1 Crore&quot;
+&quot;₹1.2 Crore – ₹1.9 Crore&quot;
+&quot;₹2 Crore – ₹2.9 Crore&quot;
+&quot;₹3 Crore – ₹3.5 Crore&quot;
+&quot;Above ₹3.6 Crore&quot;
+&quot;Not Mentioned&quot; (if no price is found)
+Rules:
+Output must be exactly one of the picklist values above.
+Never output the raw price or any other text.
+If multiple prices are mentioned, select the one matching the client&apos;s preferred unit discussed in the call.
+If no clear price is found, output &quot;Not Mentioned&quot;.
+&quot;
+&quot;Client_Preferred_Location&quot; - &quot;From the call transcript, identify the main location the client is looking to buy a property in. Return only the location name (e.g., Rajarhat, EM Bypass, etc.) without any explanation or sentence. If multiple locations are mentioned, return the most preferred or most discussed one. if Location is not mentioned answer should be &apos;All Over Kolkata&apos; &quot;
+&quot;Client_Preferred_Unit_Type&quot; - &quot;Analyze and check the Client_Preferred_Unit_Type from the call it should be from the picklist values - &quot;Studio Apartment&quot;, &quot;1 BHK&quot;, &quot;2 BHK&quot;, &quot;3 BHK&quot;, &quot;4 BHK&quot;, &quot;Penthouse&quot;, &quot;Villa&quot;, &quot;Row House&quot;, &quot;Duplex&quot;, &quot;Plot / Land&quot;, &quot;Commercial Space&quot;, &quot;Farmhouse&quot;, &quot;Serviced Apartment&quot;, &quot;Other&quot;, &quot;Not Mentioned&quot; if do not find any unit type give the default &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Need_Escalation&quot; - &quot;From the call transcript, identify if the call led to any escalation or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;Call_Satisfied&quot; - &quot;From the call transcript, identify if the the client is satisfied, partially satisfied or not satisfied, give the answer as &quot;Yes&quot; or &quot;Partially&quot; or &quot;No&quot;&quot;
+&quot;Call_Put_On_Hold&quot; - From the call transcript, determine if at any point the agent puts the customer on hold, asks them to wait, OR implies a pause to check something and then return, even if words like &quot;hold&quot; or &quot;wait&quot; are not explicitly used. This includes implied holds such as: &quot;আমি চেক করে আসছি&quot;, &quot;let me check and get back&quot;, &quot;checking the availability&quot;, &quot;thank you for holding&quot;, or any statement where the agent temporarily suspends the conversation to verify something. Answer only &quot;Yes&quot; if such an event occurs, otherwise answer &quot;No&quot;.
+&quot;
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+&quot;&lt;L1s with at least one valid L2&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+},
+&quot;No&quot;: {
+&quot;&lt;L1s with only invalid or missing L2s&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+}
+ },
+ &quot;L2_Table&quot;: {
+ &quot;Yes&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+ ...
+ },
+ &quot;No&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;description or reason&gt;&quot;,
+ ...
+ }
+ },
+&quot;L1_L2_Details&quot; : {
+&lt;L1_ID&gt; : &lt;L2_ID&gt;
+}
+&quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+ }
+
+}
+
+#### 5.4: Classify L1_IDs
+- If **at least one valid L2_ID** exists, put the L1_ID in:
+ ```json
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+  &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+ }
+
+
+
+</content>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_22</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ {!$Input:CallLog.Name}
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- &apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others]
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Agent Strengths and Development Needs:&apos; prompt and find the L2 prompts related to this and then generate &quot;Agent_Improvement_Insights&quot; in the output JSON if find multiple &quot;Agent_Improvement_Insights&quot; merge all and make it ones
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Automation Opportunities:&apos; prompt and find the L2 prompts related to this and then generate &quot;Process_Improvement_Insights&quot; in the output JSON if find multiple &quot;Process_Improvement_Insights&quot; merge all and make it ones
+
+---
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1 and L2 category mappings here:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+#### 5.1: Identify all relevant L1_IDs discussed in the transcript.
+#### 5.2: Always include &apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;` L2_Ids in the &quot;L2 table&quot; &quot;Yes&quot; section and in each time those should be included.... also add the related L1_Ids in the &apos;L1 Table&apos;
+#### 5.3: For each L1_ID:
+- Identify all associated L2_IDs
+- For each L2_ID:
+ - If the answer is valid and mentioned in the conversation (not `&quot;No&quot;`, `&quot;null&quot;`, or missing), include it and give a proper answer by analyzing from the transcript in the bellow json and in the &quot;L1_L2_Details&quot; table there should be all L2 answers from the &quot;L2_Table&quot;-&quot;Yes&quot; section and include those with their related L1 prompt (Example - If there are 01, 02, 03 L2 prompt found in the &quot;L2_Table&quot; &quot;Yes&quot; section for that add them Like &quot;P1&quot;: &quot;01&quot;,&quot;P1&quot;: &quot;02&quot;,&quot;P1&quot;: &quot;03&quot; etc ) in the &quot;L1_L2_Details&quot; section there should be same no of records presents in the &quot;L2_Table&quot; - &quot;Yes&quot; Section:
+ ```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+&quot;phone_number&quot;` → first section
+&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+ &quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+&quot;status&quot;` → fifth section
+&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+&apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others],
+&quot;CallType&quot; - &quot;Check from the transcript and find this call is &apos;Inbound&apos; or &apos;Outbound&apos;, Check from the conversation in a agent is calling to the clint then it should be outbound otherwise it should be inbound&quot;,
+&quot;Category&quot; - &quot;Analyze and check the Category of the call it should be from the picklist values - &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;(If the category is not found put as - &apos;General Enquiry&apos;)
+
+
+&quot;Client_Preferred_Price_Range&quot; - From the call transcript, determine the Client_Preferred_Price_Range by identifying the price range **explicitly stated or confirmed by the client** for the property/unit they show interest in.
+
+&quot;Client_Preferred_Price_Range&quot; - From the call transcript, determine the Client_Preferred_Price_Range only if the CLIENT clearly states or explicitly agrees to a price range for the property/unit they are interested in&apos;.
+
+&quot;Client_Preferred_Price_Range&quot; -
+Allowed picklist values:
+&quot;Below ₹19 Lakhs&quot;
+&quot;₹20 Lakhs – ₹40 Lakhs&quot;
+&quot;₹41 Lakhs – ₹60 Lakhs&quot;
+&quot;₹61 Lakhs – ₹80 Lakhs&quot;
+&quot;₹81 Lakhs – ₹1.1 Crore&quot;
+&quot;₹1.2 Crore – ₹1.9 Crore&quot;
+&quot;₹2 Crore – ₹2.9 Crore&quot;
+&quot;₹3 Crore – ₹3.5 Crore&quot;
+&quot;Above ₹3.6 Crore&quot;
+&quot;Not Mentioned&quot;
+
+Rules:
+1. A price counts ONLY if the CLIENT is the one who mentions it first OR explicitly confirms it after the agent mentions it (e.g., “Yes, that’s within my budget”).
+2. If the price is mentioned **only by the agent** and the client does not confirm it, IGNORE it.
+3. Ignore discounts, offers, and other sales details unless the client confirms the base price.
+4. If the client’s preferred price is not explicitly clear, output exactly &quot;Not Mentioned&quot;.
+5. Output must be one of the picklist values above—no raw prices or extra words.
+&quot;
+
+
+&quot;Client_Preferred_Location&quot; - &quot;From the call transcript, identify the main location the client is looking to buy a property in. Return only the location name (e.g., Rajarhat, EM Bypass, etc.) without any explanation or sentence. If multiple locations are mentioned, return the most preferred or most discussed one. if Location is not mentioned answer should be &apos;All Over Kolkata&apos; &quot;
+&quot;Client_Preferred_Unit_Type&quot; - &quot;Analyze and check the Client_Preferred_Unit_Type from the call it should be from the picklist values - &quot;Studio Apartment&quot;, &quot;1 BHK&quot;, &quot;2 BHK&quot;, &quot;3 BHK&quot;, &quot;4 BHK&quot;, &quot;Penthouse&quot;, &quot;Villa&quot;, &quot;Row House&quot;, &quot;Duplex&quot;, &quot;Plot / Land&quot;, &quot;Commercial Space&quot;, &quot;Farmhouse&quot;, &quot;Serviced Apartment&quot;, &quot;Other&quot;, &quot;Not Mentioned&quot; if do not find any unit type give the default &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Need_Escalation&quot; - &quot;From the call transcript, identify if the call led to any escalation or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;Call_Satisfied&quot; - &quot;From the call transcript, identify if the the client is satisfied, partially satisfied or not satisfied, give the answer as &quot;Yes&quot; or &quot;Partially&quot; or &quot;No&quot;&quot;
+&quot;Call_Put_On_Hold&quot; - From the call transcript, determine if at any point the agent puts the customer on hold, asks them to wait, OR implies a pause to check something and then return, even if words like &quot;hold&quot; or &quot;wait&quot; are not explicitly used. This includes implied holds such as: &quot;আমি চেক করে আসছি&quot;, &quot;let me check and get back&quot;, &quot;checking the availability&quot;, &quot;thank you for holding&quot;, or any statement where the agent temporarily suspends the conversation to verify something. Answer only &quot;Yes&quot; if such an event occurs, otherwise answer &quot;No&quot;.
+&quot;
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+&quot;&lt;L1s with at least one valid L2&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+},
+&quot;No&quot;: {
+&quot;&lt;L1s with only invalid or missing L2s&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+}
+ },
+ &quot;L2_Table&quot;: {
+ &quot;Yes&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+ ...
+ },
+ &quot;No&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;description or reason&gt;&quot;,
+ ...
+ }
+ },
+&quot;L1_L2_Details&quot; : {
+&lt;L1_ID&gt; : &lt;L2_ID&gt;
+}
+&quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+ }
+
+}
+
+#### 5.4: Classify L1_IDs
+- If **at least one valid L2_ID** exists, put the L1_ID in:
+ ```json
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+  &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+ }
+
+
+
+</content>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_23</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are an expert contact center analyzer.
+
+You will be given:
+- A transcript of a conversation between a customer and an agent:  
+ `{!$Input:CallLog.transcript_Desc__c}`
+
+- A call log file name in this format:  
+ {!$Input:CallLog.Name}
+ Example: `+911234567890_20240701_111510_113010_EmergencyCall`
+
+---
+
+### Step 1: Extract Salesforce metadata fields
+
+From Salesforce, extract and include:
+- `&quot;agent_id&quot;`: {!$Input:CallLog.AgentID__r.Id}
+- `&quot;client_id&quot;`: `{!$Input:CallLog.Client__r.Id}`
+- `&quot;call_id&quot;`: `{!$Input:CallLog.Id}`
+
+---
+
+### Step 2: Extract call metadata from filename
+
+Parse the file name and extract the following fields:
+- `&quot;phone_number&quot;` → first section
+- `&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+- `&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+- `&quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+- `&quot;status&quot;` → fifth section
+- `&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+- &apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others]
+
+---
+
+### Step 3: Agent Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Agent Strengths and Development Needs:&apos; prompt and find the L2 prompts related to this and then generate &quot;Agent_Improvement_Insights&quot; in the output JSON if find multiple &quot;Agent_Improvement_Insights&quot; merge all and make it ones
+
+---
+
+### Step 4: Process Improvement Analysis
+
+Please analysis the prompt from - {!$Input:Prompt_Summary_Setting.Summary_Text__c} and then find &apos;Automation Opportunities:&apos; prompt and find the L2 prompts related to this and then generate &quot;Process_Improvement_Insights&quot; in the output JSON if find multiple &quot;Process_Improvement_Insights&quot; merge all and make it ones
+
+---
+### Step 5: Analyze transcript and categorize L1/L2 prompts
+
+You will be given predefined L1 and L2 category mappings here:  
+➡️ `{!$Input:Prompt_Summary_Setting.Summary_Text__c}`
+
+#### 5.1: Identify all relevant L1_IDs discussed in the transcript.
+#### 5.2: Always include &apos;3&apos;, &apos;18&apos;, &apos;19&apos;, &apos;25&apos;, &apos;26&apos;, &apos;39&apos;, &apos;59&apos;` L2_Ids in the &quot;L2 table&quot; &quot;Yes&quot; section and in each time those should be included.... also add the related L1_Ids in the &apos;L1 Table&apos;
+#### 5.3: For each L1_ID:
+- Identify all associated L2_IDs
+- For each L2_ID:
+ - If the answer is valid and mentioned in the conversation (not `&quot;No&quot;`, `&quot;null&quot;`, or missing), include it and give a proper answer by analyzing from the transcript in the bellow json and in the &quot;L1_L2_Details&quot; table there should be all L2 answers from the &quot;L2_Table&quot;-&quot;Yes&quot; section and include those with their related L1 prompt (Example - If there are 01, 02, 03 L2 prompt found in the &quot;L2_Table&quot; &quot;Yes&quot; section for that add them Like &quot;P1&quot;: &quot;01&quot;,&quot;P1&quot;: &quot;02&quot;,&quot;P1&quot;: &quot;03&quot; etc ) in the &quot;L1_L2_Details&quot; section there should be same no of records presents in the &quot;L2_Table&quot; - &quot;Yes&quot; Section:
+ ```json
+{
+ &quot;client_id&quot;: &quot;&lt;client_id_from_Salesforce&gt;&quot;,
+ &quot;agent_id&quot;: &quot;&lt;agent_id_from_Salesforce&gt;&quot;,
+ &quot;call_id&quot;: &quot;&lt;call_id_from_Salesforce&gt;&quot;,
+&quot;phone_number&quot;` → first section
+&quot;call_date&quot;` → from second section, formatted as `YYYY-MM-DD`
+&quot;start_time&quot;` → third section, formatted as `HH:MM:SS`
+ &quot;end_time&quot;` → fourth section, formatted as `HH:MM:SS`
+&quot;status&quot;` → fifth section
+&quot;call_duration&quot;` → time difference between `end_time` and `start_time` in `X minutes Y seconds` format
+&apos;&apos;Quality_of_Call&apos;&apos; - analyze the Transcript and refer a quality of call rating depending on the customer satisfaction it should be out of 10 [ example : &apos;9&apos; or &apos;10&apos; or others],
+&quot;CallType&quot; - &quot;Check from the transcript and find this call is &apos;Inbound&apos; or &apos;Outbound&apos;, Check from the conversation in a agent is calling to the clint then it should be outbound otherwise it should be inbound&quot;,
+&quot;Category&quot; - &quot;Analyze and check the Category of the call it should be from the picklist values - &apos;Order Placement&apos;, &apos;Order Modification&apos;, &apos;General Enquiry&apos;, &apos;Dietician Assessment&apos;, &apos;Order Cancellation&apos;(If the category is not found put as - &apos;General Enquiry&apos;)
+
+
+&quot;Client_Preferred_Price_Range&quot; - From the call transcript, determine the Client_Preferred_Price_Range by identifying the price range **explicitly stated or confirmed by the client** for the property/unit they show interest in.
+
+&quot;Client_Preferred_Price_Range&quot; - From the call transcript, determine the Client_Preferred_Price_Range only if the CLIENT clearly states or explicitly agrees to a price range for the property/unit they are interested in&apos;.
+
+&quot;Client_Preferred_Price_Range&quot; -
+Allowed picklist values:
+&quot;Below ₹19 Lakhs&quot;
+&quot;₹20 Lakhs – ₹40 Lakhs&quot;
+&quot;₹41 Lakhs – ₹60 Lakhs&quot;
+&quot;₹61 Lakhs – ₹80 Lakhs&quot;
+&quot;₹81 Lakhs – ₹1.1 Crore&quot;
+&quot;₹1.2 Crore – ₹1.9 Crore&quot;
+&quot;₹2 Crore – ₹2.9 Crore&quot;
+&quot;₹3 Crore – ₹3.5 Crore&quot;
+&quot;Above ₹3.6 Crore&quot;
+&quot;Not Mentioned&quot;
+
+Rules:
+1. A price counts ONLY if the CLIENT is the one who mentions it first OR explicitly confirms it after the agent mentions it (e.g., “Yes, that’s within my budget”).
+2. If the price is mentioned **only by the agent** and the client does not confirm it, IGNORE it.
+3. Ignore discounts, offers, and other sales details unless the client confirms the base price.
+4. If the client’s preferred price is not explicitly clear, output exactly &quot;Not Mentioned&quot;.
+5. Output must be one of the picklist values above—no raw prices or extra words.
+&quot;
+
+
+&quot;Client_Preferred_Location&quot; - &quot;From the call transcript, identify the main location the client is looking to buy a property in. Return only the location name (e.g., Rajarhat, EM Bypass, etc.) without any explanation or sentence. If multiple locations are mentioned, return the most preferred or most discussed one. if Location is not mentioned answer should be &apos;All Over Kolkata&apos; &quot;
+&quot;Client_Preferred_Unit_Type&quot; - &quot;Analyze and check the Client_Preferred_Unit_Type from the call it should be from the picklist values - &quot;Studio Apartment&quot;, &quot;1 BHK&quot;, &quot;2 BHK&quot;, &quot;3 BHK&quot;, &quot;4 BHK&quot;, &quot;Penthouse&quot;, &quot;Villa&quot;, &quot;Row House&quot;, &quot;Duplex&quot;, &quot;Plot / Land&quot;, &quot;Commercial Space&quot;, &quot;Farmhouse&quot;, &quot;Serviced Apartment&quot;, &quot;Other&quot;, &quot;Not Mentioned&quot; if do not find any unit type give the default &quot;Not Mentioned&quot; as a answer&quot;
+&quot;Need_Escalation&quot; - &quot;From the call transcript, identify if the call led to any escalation or not, give the answer as &quot;Yes&quot; or &quot;No&quot;&quot;
+&quot;Call_Satisfied&quot; - &quot;From the call transcript, identify if the the client is satisfied, partially satisfied or not satisfied, give the answer as &quot;Yes&quot; or &quot;Partially&quot; or &quot;No&quot;&quot;
+&quot;Call_Put_On_Hold&quot; - From the call transcript, determine if at any point the agent puts the customer on hold, asks them to wait, OR implies a pause to check something and then return, even if words like &quot;hold&quot; or &quot;wait&quot; are not explicitly used. This includes implied holds such as: &quot;আমি চেক করে আসছি&quot;, &quot;let me check and get back&quot;, &quot;checking the availability&quot;, &quot;thank you for holding&quot;, or any statement where the agent temporarily suspends the conversation to verify something. Answer only &quot;Yes&quot; if such an event occurs, otherwise answer &quot;No&quot;.
+&quot;
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+&quot;&lt;L1s with at least one valid L2&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+},
+&quot;No&quot;: {
+&quot;&lt;L1s with only invalid or missing L2s&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+....
+}
+ },
+ &quot;L2_Table&quot;: {
+ &quot;Yes&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;valid answer&gt;&quot;,
+ ...
+ },
+ &quot;No&quot;: {
+ &quot;&lt;L2_ID&gt;&quot;: &quot;&lt;description or reason&gt;&quot;,
+ ...
+ }
+ },
+&quot;L1_L2_Details&quot; : {
+&lt;L1_ID&gt; : &lt;L2_ID&gt;
+}
+&quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+ 
+ }
+
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+  
+ }
+ }
+
+}
+
+#### 5.4: Classify L1_IDs
+- If **at least one valid L2_ID** exists, put the L1_ID in:
+ ```json
+ &quot;L1_Table&quot;: {
+ &quot;Yes&quot;: {
+  &quot;&lt;L1_ID&gt;&quot;: &quot;&lt;summary or reason&gt;&quot;
+ }
+
+
+
+</content>
+        <inputs>
+            <apiName>Prompt_Summary_Setting</apiName>
+            <definition>SOBJECT://Prompt_Summary_Setting__c</definition>
+            <masterLabel>Prompt_Summary_Setting</masterLabel>
+            <referenceName>Input:Prompt_Summary_Setting</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>CallLog</apiName>
+            <definition>SOBJECT://CallLog__c</definition>
+            <masterLabel>CallLog</masterLabel>
+            <referenceName>Input:CallLog</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_24</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

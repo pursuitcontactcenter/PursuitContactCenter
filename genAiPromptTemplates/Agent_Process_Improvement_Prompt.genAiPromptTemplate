@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_7</activeVersionIdentifier>
+    <description>Agent &amp; Process Improvement Prompt</description>
+    <developerName>Agent_Process_Improvement_Prompt</developerName>
+    <masterLabel>Agent &amp; Process Improvement Prompt</masterLabel>
+    <templateVersions>
+        <content>You are an expert in analyzing contact center performance and identifying actionable insights.
+
+You will be given:
+Process: {!$Input:Process_Improvement_Insights}
+Agent: {!$Input:Agent_Improvement_Insights}
+
+Each of these inputs contains **two entries** `Process_Improvement_Insights` and `Agent_Improvement_Insights`, and each entry has the following structure:
+
+ &quot;Agent_Improvement_Insights&quot;: 
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Ensure Complete and Clear Communication)(In Bold) : &lt;Describe the improvement opportunity based on the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a clear, practical recommendation for the agent to improve&gt;&quot;,
+ &quot;Guidance&quot;: 
+ &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+  &quot;3) Give suggestion 3&quot;
+
+ }
+ 
+&quot;Process_Improvement_Insights&quot;: {
+ {
+ &quot;Opportunity&quot;: &quot;Opportunity Title (e.g. Standardize Consent Script Procedure)(In Bold) : &lt;Describe the business or process inefficiency revealed in the transcript&gt;&quot;,
+ &quot;Recommendation&quot;: &quot;&lt;Give a practical, scalable solution to address it&gt;&quot;,
+ &quot;Guidance&quot;: 
+  &quot;1) Give suggestion 1&quot;,
+ &quot;2) Give suggestion 2&quot;,
+ &quot;3) Give suggestion 3&quot;
+
+ }
+Your task is to:
+1. **Read all inputs** from both `Process_Improvement_Insights` and `Agent_Improvement_Insights`.
+2. **Analyze and summarize** them into one consolidated insight for each section — merging the topics where appropriate and should be summarize of the two not adding then just using &apos;and&apos;.
+3. Preserve the original format with a combined Opportunity, Recommendation, and a consolidated Guidance section.
+
+Your output should be a single combined insight per section, using the following JSON format:
+
+</content>
+        <inputs>
+            <apiName>Agent_Improvement_Insights</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Agent Improvement Insights</masterLabel>
+            <referenceName>Input:Agent_Improvement_Insights</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Process_Improvement_Insights</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Process Improvement Insights</masterLabel>
+            <referenceName>Input:Process_Improvement_Insights</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Biy+CkWgXwiZwy8Wzk0c37NGyayD90Had1GO19nMETc=_7</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

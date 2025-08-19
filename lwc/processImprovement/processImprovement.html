@@ -1,0 +1,101 @@
+<template>
+  <template if:false={showDetail}>
+    <div class="steps-wrapper">
+      <div class="title">
+        <div class="fst-title">Agent & Process Improvement Opportunities</div>
+        <span class="sec-title">Top {opportunities.length} Success Calls</span>
+      </div>
+      <template for:each={styledOpportunities} for:item="item">
+        <div key={item.id} class="step-card" style={item.style} data-id={item.id} onclick={handleCallClick}>
+          <div class="step-header">
+            <span class="icon">📞</span>
+            <span class="step-title">{item.title}&nbsp;&nbsp;<b>⭐{item.rating}</b></span>
+          </div>
+          <div class="step-content">{item.time}</div>
+        </div>
+      </template>
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-color green"></span> Rating 7–10 (High)
+        </div>
+        <div class="legend-item">
+          <span class="legend-color yellow"></span> Rating 4–6 (Medium)
+        </div>
+        <div class="legend-item">
+          <span class="legend-color red"></span> Rating 1–3 (Low)
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template if:true={showDetail}>
+    <div class="main-class-css">
+    <div class="detail-card"  style={selectedCall.style}>
+      <div class="meta-row">
+        <span class="icon-back" onclick={handleBack}>🔙</span>
+        <!-- <span class="label">📞</span> -->
+         <span></span>
+        <span class="value">{selectedCall.title}</span>
+      </div>
+      <div class="meta-row">
+        <span class="label"></span>
+        <span class="value rating"><span class="label">⌛ Call Duration:</span> {selectedCall.callDuration} mins </span>
+      </div>
+    </div>
+    <div class="steps-wrapper enhanced-detail">
+      <div class="detail-header">
+        <!-- <span class="icon-back" onclick={handleBack}>🔙</span> -->
+        <h2 class="call-title">🧑‍💼 Agent Improvement</h2>
+      </div>
+
+      <div class="section" style={selectedCall.styleBorder}>
+        <h3>📋 Recommendation</h3>
+        <p>{selectedCall.agentRecommendation}</p>
+      </div>
+
+      <div class="section" style={selectedCall.styleBorder}>
+        <h3>💡 Opportunity</h3>
+        <p><em>{selectedCall.agentOpportunity}</em></p>
+      </div>
+
+      <div class="section" style={selectedCall.styleBorder}>
+        <h3>📌 Guidance Steps</h3>
+        <ul class="guidance-list">
+          <template for:each={agentGuidanceSteps} for:item="step">
+            <li key={step.key}>
+              {step.value}
+            </li>
+          </template>
+        </ul>
+      </div>
+    </div>
+    <div class="steps-wrapper enhanced-detail">
+      <div class="detail-header">
+        <!-- <span class="icon-back" onclick={handleBack}>🔙</span> -->
+        <h2 class="call-title">🧭 Process Improvement</h2>
+      </div>
+      <div class="section" style={selectedCall.styleBorder}>
+        <h3>📋 Recommendation</h3>
+        <p>{selectedCall.processRecommendation}</p>
+      </div>
+
+      <div class="section" style={selectedCall.styleBorder}>
+        <h3>💡 Opportunity</h3>
+        <p><em>{selectedCall.processOpportunity}</em></p>
+      </div>
+
+      <div class="section" style={selectedCall.styleBorder}>
+        <h3>📌 Guidance Steps</h3>
+        <ul class="guidance-list">
+          <template for:each={processGuidanceSteps} for:item="step">
+            <li key={step.key}>
+              {step.value}
+            </li>
+          </template>
+        </ul>
+      </div>
+    </div>
+    </div>
+  </template>
+
+</template>
