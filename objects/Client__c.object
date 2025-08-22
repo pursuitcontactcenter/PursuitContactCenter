@@ -168,7 +168,7 @@
         <deleteConstraint>SetNull</deleteConstraint>
         <label>Account</label>
         <referenceTo>Account</referenceTo>
-        <relationshipLabel>Clients</relationshipLabel>
+        <relationshipLabel>PursuitClients</relationshipLabel>
         <relationshipName>PursuitClients</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
