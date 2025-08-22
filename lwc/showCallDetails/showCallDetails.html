@@ -1,0 +1,57 @@
+<template>
+    <div class="card-layout">
+        <!-- LEFT PANEL -->
+        <div class="left-panel">
+            <h2 class="header">Real Estate</h2>
+            <p class="subtext">
+                Unlock insights, track performance, and enhance customer interactions with our AI-driven tools.
+            </p>
+
+            <div class="client-block">
+                <p><span class="agent">Agent Id : </span> <span class="agent2">{agent}</span></p>
+                <p><span class="client-name">Client Id : </span> <span class="client-name2">{clientName}</span></p>
+                <p><span class="client-meta">Account : </span> <span class="client-meta2">{accountName}</span></p>
+            </div>
+
+            <div class="conversation-block">
+                <h3>Conversation Details :</h3>
+
+                <p><span class="label">Category:</span> <span class="value">{category}</span></p>
+                <p><span class="label">Engagement Date:</span> <span class="value">📅 {engagementDate}</span></p>
+                <p><span class="label">Duration:</span> <span class="value">⏱ {duration} mins</span></p>
+                <p>
+                    <span class="label">Call Type:</span>
+                    <span class="value"><span class="pill outbound">{callType}</span></span>
+                </p>
+                <p>
+                    <span class="label">Overall Quality:</span>
+                    <span class="value">{quality}/10 <span class="star-rating">{starString}</span></span>
+                </p>
+                <template if:true={isMerged}>
+                    <div class="disconnected-call">Disconnected Call !!</div>
+                </template>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="right-panel">
+            <div class="insight-heading">
+                Important Insights For {clientName} - {agent} on {engagementDate}
+            </div>
+
+            <template if:true={filePathways}>
+                <template for:each={filePathways} for:item="group">
+                    <div key={group.l1Prompt} class="file-box">
+                        <div class="l1-prompt-title">{group.l1Prompt}</div>
+                        <template for:each={group.entries} for:item="entry">
+                            <p key={entry.l2} class="entry.answer">{entry.answer}</p>
+                        </template>
+                    </div>
+                </template>
+            </template>
+            <template if:false={filePathways}>
+                <p>No insights available for the selected prompts.</p>
+            </template>
+        </div>
+    </div>
+</template>

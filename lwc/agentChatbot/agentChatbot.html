@@ -1,0 +1,110 @@
+<template>
+    <div class="chat-toggle-button" onclick={toggleChat}>
+        <lightning-icon icon-name="utility:chat" size="large"></lightning-icon>
+    </div>
+
+    <div class="chat-container" style={containerStyle}>
+        <div class="chat-header">
+            <img src={chatbotLogo} class="chatbot-logo" alt="Chatbot Logo"/>
+            <h2>AgentBot</h2>
+            <!-- <lightning-button-icon 
+                icon-name="utility:close" 
+                alternative-text="Close"
+                onclick={toggleChat}>
+            </lightning-button-icon> -->
+            <div class="header-actions">
+                  <!--<div class="combobox">
+                      <lightning-combobox
+                        name="lang-select"
+                        value={currentlang}
+                        options={options}
+                        onchange={handleChange}
+                        class="black-text" ></lightning-combobox>
+                    </div>-->
+                <lightning-button-icon 
+                    variant="border-inverse"
+                    icon-name="utility:expand_alt" 
+                    alternative-text="Toggle Fullscreen"
+                    onclick={toggleFullscreen}
+                    class="fullscreen-btn">
+                </lightning-button-icon>
+                <lightning-button-icon 
+                    variant="border-inverse"
+                    icon-name="utility:close" 
+                    alternative-text="Close"
+                    onclick={toggleChat}>
+                </lightning-button-icon>
+            </div>
+        </div>
+
+        <div class="chat-messages" ref="messagesContainer" style={chatMessagesStyle}>
+            <template for:each={messages} for:item="msg">
+                <div key={msg.id} class={msg.containerClass}>
+                    <img src={msg.avatar} 
+                         class="message-avatar"
+                         alt={msg.senderAlt}/>
+                    <div class={msg.bubbleClass}>
+                        <div class="message-content"><lightning-formatted-rich-text value={msg.text}></lightning-formatted-rich-text>
+                        </div>
+                        <div class="message-time">{msg.timestamp}</div>
+                    </div>
+                </div>
+            </template>
+
+            <div if:true={isBotTyping} class="typing-indicator">
+                <img src={botAvatar} class="message-avatar" alt="Assistant"/>
+                <div class="typing-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="quick-replies" if:true={showQuickReplies}>
+            <template for:each={quickReplies} for:item="reply">
+                <lightning-button 
+                    key={reply.id} 
+                    label={reply.text}
+                    class="quick-reply-btn"
+                    onclick={handleQuickReply}>
+                </lightning-button>
+            </template>
+        </div> -->
+
+        <div class="quick-replies-container" if:true={showQuickReplies}>
+    <div class="quick-replies-scroller">
+        <template for:each={quickReplies} for:item="reply">
+            <lightning-button 
+                key={reply.id} 
+                label={reply.text}
+                class="quick-reply-btn"
+                onclick={handleQuickReply}>
+            </lightning-button>
+        </template>
+    </div>
+</div>
+
+        <div class="chat-input">
+            <lightning-input type="text" 
+                            value={newMessage} 
+                            onkeypress={handleKeyPress}
+                            placeholder="Type your message..."
+                            variant="label-hidden">
+            </lightning-input>
+            <!--<lightning-button-icon
+                icon-name={recordicon} 
+                alternative-text="Record"
+                onclick={recordMessage}
+                class="send-btn">
+            </lightning-button-icon>-->
+            <lightning-button-icon 
+                icon-name="utility:send" 
+                alternative-text="Send"
+                onclick={sendMessage}
+                class="send-btn">
+            </lightning-button-icon>
+           
+        </div>
+    </div>
+</template>

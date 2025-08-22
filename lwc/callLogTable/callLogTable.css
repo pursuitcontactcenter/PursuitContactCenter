@@ -1,0 +1,133 @@
+.dashboard-container {
+    padding: 1rem;
+    font-family: 'Segoe UI', sans-serif;
+    max-width: 100%;
+    
+    background-color: #ffffffe3;
+    border-radius: 0.75rem;
+    display: flex;              /* <-- added */
+    flex-direction: column;     /* <-- added */
+}
+
+.heading {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #14213d;
+}
+
+.call-icon {
+    color: green;
+    font-size: 1.4rem;
+    margin-right: 0.4rem;
+    vertical-align: middle;
+}
+
+.table-container {
+    border: 1px solid #ccc;
+    /* max-height: 730px;  <-- remove fixed cap */
+    /* overflow-y: hidden; <-- was hiding the scrollbar */
+    flex: 1;                    /* fill remaining dashboard height */
+    overflow: hidden;           /* let tbody manage the scroll */
+    display: flex;              /* allow the table to stretch */
+    flex-direction: column;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.custom-table thead {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    background-color: #7897ec;
+    color: white;
+    font-weight: bold;
+}
+
+.custom-table tbody {
+    display: block;
+    /* give the body its own scroll area that fills the dashboard */
+    max-height: calc(82vh - 150px); /* header + paddings; tweak if needed */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.custom-table tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    box-sizing: border-box;
+}
+
+.custom-table th,
+.custom-table td {
+    padding: 12px;
+    font-size: 0.9rem;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.custom-table tbody tr:nth-child(even) {
+    background-color: #cbd5f0;
+}
+
+.custom-table tbody tr:nth-child(odd) {
+    background-color: #e9ecef;
+}
+
+.sortable {
+    cursor: pointer;
+    user-select: none;
+    color: inherit;
+    text-decoration: none;
+}
+
+.sortable:hover {
+    text-decoration: underline;
+}
+
+.sort-arrow {
+    margin-left: 6px;
+    font-size: 0.85rem;
+}
+
+.details-btn {
+    background-color: #5663aa;
+    color: white;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.details-btn:hover {
+    background-color: #457b9d;
+}
+
+.back-btn {
+    margin-bottom: 1rem;
+    background-color: #1d3557;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-block;
+    width: 100px;
+}
+
+.back-btn-container {
+    text-align: left;
+}
+
+.cell-hover:hover {
+    background-color: #f1f1f1;
+}
