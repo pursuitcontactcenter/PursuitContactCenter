@@ -170,6 +170,17 @@
     <sharingModel>Private</sharingModel>
     <visibility>Public</visibility>
     <fields>
+        <fullName>User__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <label>User</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Agents</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Agent_Improvement_Insights__c</fullName>
         <label>Agent Improvement Insights</label>
         <length>32768</length>
