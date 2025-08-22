@@ -170,6 +170,60 @@
     <sharingModel>Private</sharingModel>
     <visibility>Public</visibility>
     <fields>
+        <fullName>Patient_Age_H__c</fullName>
+        <label>Patient Age</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>&lt; 1 year</fullName>
+                    <default>false</default>
+                    <label>&lt; 1 year</label>
+                </value>
+                <value>
+                    <fullName>01 – 12 years</fullName>
+                    <default>false</default>
+                    <label>01 – 12 years</label>
+                </value>
+                <value>
+                    <fullName>13 – 19 years</fullName>
+                    <default>false</default>
+                    <label>13 – 19 years</label>
+                </value>
+                <value>
+                    <fullName>20 – 39 years</fullName>
+                    <default>false</default>
+                    <label>20 – 39 years</label>
+                </value>
+                <value>
+                    <fullName>40 – 59 years</fullName>
+                    <default>false</default>
+                    <label>40 – 59 years</label>
+                </value>
+                <value>
+                    <fullName>60 – 79 years</fullName>
+                    <default>false</default>
+                    <label>60 – 79 years</label>
+                </value>
+                <value>
+                    <fullName>80+ years</fullName>
+                    <default>false</default>
+                    <label>80+ years</label>
+                </value>
+                <value>
+                    <fullName>Not Mentioned</fullName>
+                    <default>false</default>
+                    <label>Not Mentioned</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
         <fullName>Sector_Type_H__c</fullName>
         <label>Sector Type</label>
         <required>false</required>
