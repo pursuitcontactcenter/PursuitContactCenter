@@ -198,8 +198,8 @@
         <deleteConstraint>SetNull</deleteConstraint>
         <label>Contact</label>
         <referenceTo>Contact</referenceTo>
-        <relationshipLabel>CallLogs</relationshipLabel>
-        <relationshipName>CallLogs</relationshipName>
+        <relationshipLabel>CCCallLogs</relationshipLabel>
+        <relationshipName>CCCallLogs</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
