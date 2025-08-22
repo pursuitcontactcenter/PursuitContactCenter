@@ -170,6 +170,35 @@
     <sharingModel>Private</sharingModel>
     <visibility>Public</visibility>
     <fields>
+        <fullName>Feature_CC__c</fullName>
+        <label>Feature CC+</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Hospital CC</fullName>
+                    <default>false</default>
+                    <label>Hospital CC</label>
+                </value>
+                <value>
+                    <fullName>Real Estate CC</fullName>
+                    <default>false</default>
+                    <label>Real Estate CC</label>
+                </value>
+                <value>
+                    <fullName>Others CC</fullName>
+                    <default>false</default>
+                    <label>Others CC</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
         <fullName>Patient_Age_H__c</fullName>
         <label>Patient Age</label>
         <required>false</required>
