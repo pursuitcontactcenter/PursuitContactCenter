@@ -170,6 +170,71 @@
     <sharingModel>Private</sharingModel>
     <visibility>Public</visibility>
     <fields>
+        <fullName>Test_Report_H__c</fullName>
+        <label>Test Report</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Blood Test</fullName>
+                    <default>false</default>
+                    <label>Blood Test</label>
+                </value>
+                <value>
+                    <fullName>Urine Test</fullName>
+                    <default>false</default>
+                    <label>Urine Test</label>
+                </value>
+                <value>
+                    <fullName>X-Ray</fullName>
+                    <default>false</default>
+                    <label>X-Ray</label>
+                </value>
+                <value>
+                    <fullName>MRI</fullName>
+                    <default>false</default>
+                    <label>MRI</label>
+                </value>
+                <value>
+                    <fullName>CT Scan</fullName>
+                    <default>false</default>
+                    <label>CT Scan</label>
+                </value>
+                <value>
+                    <fullName>Ultrasound</fullName>
+                    <default>false</default>
+                    <label>Ultrasound</label>
+                </value>
+                <value>
+                    <fullName>ECG / ECHO</fullName>
+                    <default>false</default>
+                    <label>ECG / ECHO</label>
+                </value>
+                <value>
+                    <fullName>Biopsy</fullName>
+                    <default>false</default>
+                    <label>Biopsy</label>
+                </value>
+                <value>
+                    <fullName>Covid-19 Report</fullName>
+                    <default>false</default>
+                    <label>Covid-19 Report</label>
+                </value>
+                <value>
+                    <fullName>Not Mentioned</fullName>
+                    <default>false</default>
+                    <label>Not Mentioned</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
         <fullName>Client__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <label>Client</label>
