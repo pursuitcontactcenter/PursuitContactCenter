@@ -165,7 +165,7 @@
         <trackHistory>false</trackHistory>
         <type>Text</type>
     </nameField>
-    <pluralLabel>Agents</pluralLabel>
+    <pluralLabel>CallAgents</pluralLabel>
     <searchLayouts/>
     <sharingModel>Private</sharingModel>
     <visibility>Public</visibility>
