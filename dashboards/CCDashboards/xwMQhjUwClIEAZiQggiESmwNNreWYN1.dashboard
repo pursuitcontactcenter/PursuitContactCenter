@@ -15,7 +15,7 @@
                 <autoselectColumnsFromReport>true</autoselectColumnsFromReport>
                 <componentType>RichText</componentType>
                 <dashboardComponentContents>
-                    <richTextContent>[{\&amp;quot;attributes\&amp;quot;:{\&amp;quot;italic\&amp;quot;:true,\&amp;quot;color\&amp;quot;:\&amp;quot;#ffff93\&amp;quot;,\&amp;quot;size\&amp;quot;:\&amp;quot;30px\&amp;quot;,\&amp;quot;bold\&amp;quot;:true},\&amp;quot;insert\&amp;quot;:\&amp;quot;Client Preference\&amp;quot;},{\&amp;quot;attributes\&amp;quot;:{\&amp;quot;align\&amp;quot;:\&amp;quot;center\&amp;quot;},\&amp;quot;insert\&amp;quot;:\&amp;quot;\\n\&amp;quot;}]</richTextContent>
+                    <richTextContent>[{\&amp;quot;attributes\&amp;quot;:{\&amp;quot;italic\&amp;quot;:true,\&amp;quot;color\&amp;quot;:\&amp;quot;#ffff93\&amp;quot;,\&amp;quot;size\&amp;quot;:\&amp;quot;30px\&amp;quot;,\&amp;quot;bold\&amp;quot;:true},\&amp;quot;insert\&amp;quot;:\&amp;quot;Patient Information\&amp;quot;},{\&amp;quot;attributes\&amp;quot;:{\&amp;quot;align\&amp;quot;:\&amp;quot;center\&amp;quot;},\&amp;quot;insert\&amp;quot;:\&amp;quot;\\n\&amp;quot;}]</richTextContent>
                 </dashboardComponentContents>
                 <groupingSortProperties/>
             </dashboardComponent>
@@ -29,9 +29,8 @@
                 <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
                 <chartAxisRange>Auto</chartAxisRange>
                 <chartSummary>
-                    <aggregate>Unique</aggregate>
                     <axisBinding>y</axisBinding>
-                    <column>CUST_NAME</column>
+                    <column>RowCount</column>
                 </chartSummary>
                 <componentType>Bar</componentType>
                 <decimalPrecision>-1</decimalPrecision>
@@ -40,16 +39,16 @@
                 <drillToDetailEnabled>false</drillToDetailEnabled>
                 <enableHover>false</enableHover>
                 <expandOthers>false</expandOthers>
-                <groupingColumn>CallLog__c.Client_Preferred_Location__c</groupingColumn>
+                <groupingColumn>CallLog__c.Test_Report_H__c</groupingColumn>
                 <groupingSortProperties>
                     <groupingSorts>
                         <groupingLevel>g1</groupingLevel>
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Client Preferred Location</header>
+                <header>Test Report</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>RealEstateReports/Client_Preferred_Location_JSz</report>
+                <report>HospitalReports/Test_Report_0Xj</report>
                 <showPercentage>false</showPercentage>
                 <showPicturesOnCharts>false</showPicturesOnCharts>
                 <showValues>true</showValues>
@@ -71,23 +70,24 @@
                     <axisBinding>y</axisBinding>
                     <column>CUST_NAME</column>
                 </chartSummary>
-                <componentType>Column</componentType>
+                <componentType>Funnel</componentType>
                 <decimalPrecision>-1</decimalPrecision>
                 <displayUnits>Auto</displayUnits>
                 <drillEnabled>false</drillEnabled>
                 <drillToDetailEnabled>false</drillToDetailEnabled>
                 <enableHover>false</enableHover>
                 <expandOthers>false</expandOthers>
-                <groupingColumn>CallLog__c.Client_Preferred_Unit_Type__c</groupingColumn>
+                <groupingColumn>CallLog__c.Sector_Type_H__c</groupingColumn>
                 <groupingSortProperties>
                     <groupingSorts>
                         <groupingLevel>g1</groupingLevel>
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Unit Type</header>
-                <legendPosition>Bottom</legendPosition>
-                <report>RealEstateReports/Client_Preferred_Location_hD3</report>
+                <header>Sector Type</header>
+                <legendPosition>Right</legendPosition>
+                <maxValuesDisplayed>6</maxValuesDisplayed>
+                <report>HospitalReports/Sector_Type_Hospital_Z5T</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
@@ -115,17 +115,16 @@
                 <drillToDetailEnabled>false</drillToDetailEnabled>
                 <enableHover>false</enableHover>
                 <expandOthers>false</expandOthers>
-                <groupingColumn>CallLog__c.Client_Preferred_Price_Range__c</groupingColumn>
+                <groupingColumn>CallLog__c.Patient_Age_H__c</groupingColumn>
                 <groupingSortProperties>
                     <groupingSorts>
                         <groupingLevel>g1</groupingLevel>
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Price Range</header>
+                <header>Patient Age</header>
                 <legendPosition>Right</legendPosition>
-                <maxValuesDisplayed>10</maxValuesDisplayed>
-                <report>RealEstateReports/Client_Preferred_Price_Range_9QM</report>
+                <report>HospitalReports/Patient_Age_Hospital_n2g</report>
                 <showPercentage>false</showPercentage>
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
@@ -182,7 +181,7 @@
                 </groupingSortProperties>
                 <header>Call Satisfaction</header>
                 <legendPosition>Right</legendPosition>
-                <report>RealEstateReports/Call_Satisfaction_fDC</report>
+                <report>HospitalReports/Copy_of_Call_Satisfaction_Hospital_F0y</report>
                 <showPercentage>false</showPercentage>
                 <showValues>false</showValues>
                 <sortBy>RowLabelAscending</sortBy>
@@ -203,7 +202,7 @@
                     <axisBinding>y</axisBinding>
                     <column>CUST_NAME</column>
                 </chartSummary>
-                <componentType>BarGrouped</componentType>
+                <componentType>BarStacked</componentType>
                 <decimalPrecision>-1</decimalPrecision>
                 <displayUnits>Auto</displayUnits>
                 <drillEnabled>false</drillEnabled>
@@ -224,9 +223,9 @@
                 </groupingSortProperties>
                 <header>Call Needs Escalation</header>
                 <legendPosition>Right</legendPosition>
-                <report>RealEstateReports/Call_needs_to_be_escalated_djL</report>
+                <report>HospitalReports/Call_needs_to_be_escalated_Hospital_hXU</report>
                 <showPercentage>false</showPercentage>
-                <showValues>true</showValues>
+                <showValues>false</showValues>
                 <sortBy>RowLabelAscending</sortBy>
                 <sortLegendValues>true</sortLegendValues>
                 <useReportChart>false</useReportChart>
@@ -245,7 +244,7 @@
                     <axisBinding>y</axisBinding>
                     <column>CUST_NAME</column>
                 </chartSummary>
-                <componentType>ColumnGrouped</componentType>
+                <componentType>ColumnStacked</componentType>
                 <decimalPrecision>-1</decimalPrecision>
                 <displayUnits>Auto</displayUnits>
                 <drillEnabled>false</drillEnabled>
@@ -266,9 +265,9 @@
                 </groupingSortProperties>
                 <header>Call Put On Hold</header>
                 <legendPosition>Right</legendPosition>
-                <report>RealEstateReports/Number_Of_Call_Put_On_Hold_FX6</report>
+                <report>HospitalReports/Number_Of_Call_Put_On_Hold_Hospital_uKL</report>
                 <showPercentage>false</showPercentage>
-                <showValues>true</showValues>
+                <showValues>false</showValues>
                 <sortBy>RowLabelAscending</sortBy>
                 <sortLegendValues>true</sortLegendValues>
                 <useReportChart>false</useReportChart>
@@ -283,7 +282,7 @@
                 <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
                 <chartAxisRange>Auto</chartAxisRange>
                 <chartSummary>
-                    <aggregate>Average</aggregate>
+                    <aggregate>Sum</aggregate>
                     <axisBinding>y</axisBinding>
                     <column>CallLog__c.Quality_Of_Call__c</column>
                 </chartSummary>
@@ -303,7 +302,7 @@
                 </groupingSortProperties>
                 <header>Average Call Quality</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>RealEstateReports/Call_Quality_Pky</report>
+                <report>HospitalReports/AveCall_Quality_Real_Estate_JW7</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
@@ -355,7 +354,7 @@
                 <header>Call Category</header>
                 <legendPosition>Right</legendPosition>
                 <maxValuesDisplayed>6</maxValuesDisplayed>
-                <report>RealEstateReports/CallLogs_With_Category_iqJ</report>
+                <report>HospitalReports/CallLogs_With_Category_Hospital_t6l</report>
                 <showPercentage>false</showPercentage>
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
@@ -393,7 +392,7 @@
                 </groupingSortProperties>
                 <header>Call Type</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>RealEstateReports/Total_No_Of_Calls_GH0</report>
+                <report>HospitalReports/Call_Type_Hospital_er5</report>
                 <showPercentage>false</showPercentage>
                 <showPicturesOnCharts>false</showPicturesOnCharts>
                 <showValues>true</showValues>
@@ -412,7 +411,7 @@
     <owner>pratik.pursuit844@agentforce.com</owner>
     <runningUser>pratik.pursuit844@agentforce.com</runningUser>
     <textColor>#000000</textColor>
-    <title>Real Estate</title>
+    <title>Hospital Management</title>
     <titleColor>#000000</titleColor>
     <titleSize>12</titleSize>
 </Dashboard>
