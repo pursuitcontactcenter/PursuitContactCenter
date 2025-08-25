@@ -34,4 +34,5 @@
     <tabs>Operation</tabs>
     <tabs>Task_Overview</tabs>
     <uiType>Lightning</uiType>
+    <utilityBar>Contact_Center_UtilityBar</utilityBar>
 </CustomApplication>

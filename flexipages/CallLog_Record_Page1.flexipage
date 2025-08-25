@@ -111,24 +111,10 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.Test_Report_H__c</fieldItem>
-                <identifier>RecordTest_Report_H__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.Sector_Type_H__c</fieldItem>
-                <identifier>RecordSector_Type_H__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.Patient_Age_H__c</fieldItem>
-                <identifier>RecordPatient_Age_H__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Feature_CC__c</fieldItem>
                 <identifier>RecordFeature_CC__cField</identifier>
             </fieldInstance>
@@ -313,40 +299,6 @@
                 <identifier>RecordCall_Satisfied__cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-8dcabb73-6e56-486c-9311-e819c5e76261</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Client_Preferred_Price_Range__c</fieldItem>
-                <identifier>RecordClient_Preferred_Price_Range__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Client_Preferred_Unit_Type__c</fieldItem>
-                <identifier>RecordClient_Preferred_Unit_Type__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Client_Preferred_Location__c</fieldItem>
-                <identifier>RecordClient_Preferred_Location__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -365,6 +317,112 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Need_Escalation__c</fieldItem>
                 <identifier>RecordNeed_Escalation__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-8dcabb73-6e56-486c-9311-e819c5e76261</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Client_Preferred_Price_Range__c</fieldItem>
+                <identifier>RecordClient_Preferred_Price_Range__cField</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Feature_CC__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Real Estate CC</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Client_Preferred_Unit_Type__c</fieldItem>
+                <identifier>RecordClient_Preferred_Unit_Type__cField</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Feature_CC__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Real Estate CC</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Client_Preferred_Location__c</fieldItem>
+                <identifier>RecordClient_Preferred_Location__cField</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Feature_CC__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Real Estate CC</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Test_Report_H__c</fieldItem>
+                <identifier>RecordTest_Report_H__cField</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Feature_CC__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Hospital CC</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Sector_Type_H__c</fieldItem>
+                <identifier>RecordSector_Type_H__cField</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Feature_CC__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Hospital CC</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Patient_Age_H__c</fieldItem>
+                <identifier>RecordPatient_Age_H__cField</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Feature_CC__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Hospital CC</rightValue>
+                    </criteria>
+                </visibilityRule>
             </fieldInstance>
         </itemInstances>
         <name>Facet-07158ac5-2259-40d6-966c-9bf8afbbdd8d</name>
