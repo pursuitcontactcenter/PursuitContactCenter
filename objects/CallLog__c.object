@@ -170,6 +170,17 @@
     <sharingModel>Private</sharingModel>
     <visibility>Public</visibility>
     <fields>
+        <fullName>CallID__c</fullName>
+        <externalId>false</externalId>
+        <label>CallID</label>
+        <length>100</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Feature_CC__c</fullName>
         <label>Feature CC+</label>
         <required>false</required>
