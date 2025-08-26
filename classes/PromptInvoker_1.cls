@@ -189,7 +189,7 @@ public class L2Table {
 }*/
 //**********************************************************  Updated Code  ******************************************************
 public with sharing class PromptInvoker_1 {
-    public static String FetchRulesDetails(Id callLogId) {
+    public static String FetchRulesDetails(Id callLogId , String Feature_CC) {
         System.debug('===== Fetch Prompt START =====');
         try {
             // Step 1: Query CallLog__c record
@@ -231,10 +231,15 @@ public with sharing class PromptInvoker_1 {
 
             // Step 5: Additional Config
             promptInput.additionalConfig = new ConnectApi.EinsteinLLmAdditionalConfigInput();
-
+            
+            ConnectApi.EinsteinPromptTemplateGenerationsRepresentation generationsOutput;
             // Step 6: Generate the response
-            ConnectApi.EinsteinPromptTemplateGenerationsRepresentation generationsOutput =
-                ConnectApi.EinsteinLLM.generateMessagesForPromptTemplate('Call_Transcript_Prompt_2', promptInput);
+            if ( Feature_CC == 'Real Estate CC'){
+                generationsOutput = ConnectApi.EinsteinLLM.generateMessagesForPromptTemplate('Call_Transcript_Prompt_2', promptInput);
+            }
+            if ( Feature_CC == 'Hospital CC'){
+                generationsOutput = ConnectApi.EinsteinLLM.generateMessagesForPromptTemplate('Call_transcript_prompt_hospital', promptInput);
+            }
 
             // Step 7: Extract response
             ConnectApi.EinsteinLLMGenerationItemOutput response = generationsOutput.generations[0];
@@ -247,7 +252,7 @@ public with sharing class PromptInvoker_1 {
         }
     }
 
-    public static void StringToJson(String jsonDetails , String callStatus) {
+    public static void StringToJson(String jsonDetails , String callStatus , String Feature_CC) {
         
        System.debug('===== StringToJson START =====');
     
@@ -271,24 +276,46 @@ public with sharing class PromptInvoker_1 {
     }
 
     try {
-        // Update calllog start
-        update new CallLog__c(
-            Id = parsed.call_id,
-            Mobile_Number__c = parsed.phone_number,
-            Agent_Improvement_Insights__c = JSON.serialize(parsed.Agent_Improvement_Insights),
-            Process_Improvement_Insights__c = JSON.serialize(parsed.Process_Improvement_Insights),
-            Engagement_Date__c = parsed.call_date,
-            PromptStatus__c = 'Success',
-            Category__c = parsed.Category,
-            CallType__c = parsed.CallType,
-            Quality_of_Call__c = parsed.Quality_of_Call,
-            Client_Preferred_Price_Range__c = parsed.Client_Preferred_Price_Range,
-            Client_Preferred_Unit_Type__c = parsed.Client_Preferred_Unit_Type,
-            Client_Preferred_Location__c = parsed.Client_Preferred_Location,
-            Call_Put_On_Hold__c = parsed.Call_Put_On_Hold,
-            Call_Satisfied__c = parsed.Call_Satisfied,
-            Need_Escalation__c = parsed.Need_Escalation
-        );
+        if ( Feature_CC == 'Real Estate CC'){
+            // Update calllog start
+            update new CallLog__c(
+                Id = parsed.call_id,
+                Mobile_Number__c = parsed.phone_number,
+                Agent_Improvement_Insights__c = JSON.serialize(parsed.Agent_Improvement_Insights),
+                Process_Improvement_Insights__c = JSON.serialize(parsed.Process_Improvement_Insights),
+                Engagement_Date__c = parsed.call_date,
+                PromptStatus__c = 'Success',
+                Category__c = parsed.Category,
+                CallType__c = parsed.CallType,
+                Quality_of_Call__c = parsed.Quality_of_Call,
+                Client_Preferred_Price_Range__c = parsed.Client_Preferred_Price_Range,
+                Client_Preferred_Unit_Type__c = parsed.Client_Preferred_Unit_Type,
+                Client_Preferred_Location__c = parsed.Client_Preferred_Location,
+                Call_Put_On_Hold__c = parsed.Call_Put_On_Hold,
+                Call_Satisfied__c = parsed.Call_Satisfied,
+                Need_Escalation__c = parsed.Need_Escalation
+            );
+        }
+        if ( Feature_CC == 'Hospital CC'){
+            // Update calllog start
+            update new CallLog__c(
+                Id = parsed.call_id,
+                Mobile_Number__c = parsed.phone_number,
+                Agent_Improvement_Insights__c = JSON.serialize(parsed.Agent_Improvement_Insights),
+                Process_Improvement_Insights__c = JSON.serialize(parsed.Process_Improvement_Insights),
+                Engagement_Date__c = parsed.call_date,
+                PromptStatus__c = 'Success',
+                Category__c = parsed.Category,
+                CallType__c = parsed.CallType,
+                Quality_of_Call__c = parsed.Quality_of_Call,
+                Call_Put_On_Hold__c = parsed.Call_Put_On_Hold,
+                Call_Satisfied__c = parsed.Call_Satisfied,
+                Need_Escalation__c = parsed.Need_Escalation,
+                Patient_Age_H__c = parsed.Patient_Age_H,
+                Sector_Type_H__c = parsed.Sector_Type_H,
+                Test_Report_H__c = parsed.Test_Report_H
+            );
+        }
         // Update calllog end
         
         // Filepathway create start
@@ -361,6 +388,9 @@ public with sharing class PromptInvoker_1 {
         public String Call_Put_On_Hold;
         public String Call_Satisfied;
         public String Need_Escalation;
+        public String Patient_Age_H;
+        public String Sector_Type_H;
+        public String Test_Report_H;
     }
     
     public class L1Table {

@@ -2,7 +2,7 @@ global class PromptDataGenerateScheduler implements Schedulable {
     global void execute(SchedulableContext sc) {
         System.debug('Running GoogleDriveGeminiTranscriberQueueable.updateTranscriptDescriptions at: ' + System.now());
         try {
-            GoogleDriveGeminiTranscriberQueueable.updateTranscriptDescriptions(null, null, null, null);
+            GoogleDriveGeminiTranscriberQueueable.updateTranscriptDescriptions(null, null, null, null, null );
         } catch (Exception e) {
             System.debug('Error in updateTranscriptDescriptions: ' + e.getMessage());
         }
