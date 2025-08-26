@@ -68,6 +68,7 @@ public with sharing class GeminiTranscriptionCalloutQueueable implements Queueab
             String endTimeStr = parts[3];
             String transcriptAgentId = parts[4];
             String isMerged = '' , mergedCallID = '';
+            String Feature_CC = '';
             CallLog__c parentMergedCall;
             List<CallLog__c> parentcall = new List<CallLog__c>();
             
@@ -99,8 +100,26 @@ public with sharing class GeminiTranscriptionCalloutQueueable implements Queueab
                 + ' ' + endTimeStr.substring(0,2) + ':' + endTimeStr.substring(2,4) + ':' + endTimeStr.substring(4,6);
             DateTime callStart = DateTime.valueOf(formattedStart);
             DateTime callEnd = DateTime.valueOf(formattedEnd);
-
+            
             TranscriptPayload payload = new TranscriptPayload();
+            if (parts.size() > 5) {
+                System.debug(' parts[5]--------->: ' + parts[5]);
+                Feature_CC = parts[5];                 
+                if(Feature_CC != 'H' && parts.size() > 6){
+                    Feature_CC = parts[6]; 
+                    if(Feature_CC == 'H'){
+                        payload.Feature_CC = 'Hospital CC';
+                    }else{
+                        payload.Feature_CC = 'Real Estate CC';
+                    }
+                }else if(Feature_CC == 'H'){
+                    payload.Feature_CC = 'Hospital CC';
+                }else{
+                    payload.Feature_CC = 'Real Estate CC';
+                }
+            }else{
+                    payload.Feature_CC = 'Real Estate CC';
+                }
             
             if (parentMergedCall != null) {
                 payload.parentMergedCall = parentMergedCall;
