@@ -57,12 +57,14 @@ public class TranscriptProcessorQueueable implements Queueable, Database.AllowsC
     private String transcriptText;
     private String callStatus;
     private String promptStatus;
-
-    public TranscriptProcessorQueueable(Id logId, String transcriptText, String callStatus, String promptStatus) {
-    this.logId = logId;
-    this.transcriptText = transcriptText;
-    this.callStatus = callStatus;
-    this.promptStatus = promptStatus;
+    private String Feature_CC;
+    
+    public TranscriptProcessorQueueable(Id logId, String transcriptText, String callStatus, String promptStatus,String Feature_CC) {
+        this.logId = logId;
+        this.transcriptText = transcriptText;
+        this.callStatus = callStatus;
+        this.promptStatus = promptStatus;
+        this.Feature_CC =  Feature_CC;
     }
 
 
@@ -81,8 +83,8 @@ public class TranscriptProcessorQueueable implements Queueable, Database.AllowsC
                     Call_Status__c = 'Closed'
                 );
                 try {
-                    String jsonData = PromptInvoker_1.FetchRulesDetails(log.Id);
-                    PromptInvoker_1.StringToJson(jsonData,  callStatus );
+                    String jsonData = PromptInvoker_1.FetchRulesDetails(log.Id , this.Feature_CC);
+                    PromptInvoker_1.StringToJson(jsonData,  callStatus , this.Feature_CC);
                     System.debug('Prompt invoked successfully');
                 } catch (Exception ex) {
                     System.debug('Prompt error for log ' + log.Id + ': ' + ex.getMessage());
@@ -92,8 +94,8 @@ public class TranscriptProcessorQueueable implements Queueable, Database.AllowsC
         }
          else if (callStatus == 'Closed' && (promptStatus == 'Failed' || promptStatus == null)) {
                 try {
-                    String jsonData = PromptInvoker_1.FetchRulesDetails(logId);
-                    PromptInvoker_1.StringToJson(jsonData ,  callStatus );
+                    String jsonData = PromptInvoker_1.FetchRulesDetails(logId , this.Feature_CC);
+                    PromptInvoker_1.StringToJson(jsonData ,  callStatus , this.Feature_CC);
                     System.debug('Prompt invoked successfully');
                 } catch (Exception e) {
                     System.debug('Prompt error for log ' + logId + ': ' + e.getMessage());

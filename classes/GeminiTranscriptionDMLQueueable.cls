@@ -63,9 +63,10 @@ public with sharing class GeminiTranscriptionDMLQueueable implements Queueable {
                 //isMerged__c = (payload.isMerged != null) ? String.isNotBlank(payload.isMerged) : null ,
                 mergedCall__c = (payload.parentMergedCallId != null) ? payload.parentMergedCallId : null,
                 historyTrack__c = (payload.historyTrack != null) ? payload.historyTrack : null,
-                Sector_Type_H__c = (payload.historyTrack != null) ? payload.historyTrack : null,
-                Test_Report_H__c = (payload.historyTrack != null) ? payload.historyTrack : null,
-                Patient_Age_H__c = (payload.historyTrack != null) ? payload.historyTrack : null,
+                //Sector_Type_H__c = (payload.historyTrack != null) ? payload.historyTrack : null,
+                //Test_Report_H__c = (payload.historyTrack != null) ? payload.historyTrack : null,
+                //Patient_Age_H__c = (payload.historyTrack != null) ? payload.historyTrack : null,
+                Feature_CC__c = (payload.Feature_CC != null) ? payload.Feature_CC : null,
                 OwnerId = agentUserId
             );
             insert newLog;

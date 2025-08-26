@@ -875,18 +875,18 @@ public with sharing class GoogleDriveGeminiTranscriberQueueable implements Queue
             System.debug(input.substring(i, endIndex));
         }
     }
-    public static void updateTranscriptDescriptions(Id logId, String transcriptText, String callStatus, String promptStatus) {
-        if (logId != null && transcriptText != null && callStatus != null && promptStatus != null) {
+    public static void updateTranscriptDescriptions(Id logId, String transcriptText, String callStatus, String promptStatus , String Feature_CC) {
+        if (logId != null && transcriptText != null && callStatus != null ) {
             System.debug('Enqueuing job for specific CallLog');
-            System.enqueueJob(new TranscriptProcessorQueueable(logId, transcriptText, callStatus, promptStatus));
+            System.enqueueJob(new TranscriptProcessorQueueable(logId, transcriptText, callStatus, promptStatus , Feature_CC	));
         } else {
             List<CallLog__c> pending = [
-                SELECT Id, transcript_Desc__c, Call_Status__c, PromptStatus__c
+                SELECT Id, transcript_Desc__c, Call_Status__c, PromptStatus__c , Feature_CC__c	
                 FROM CallLog__c
                 LIMIT 100
             ];
             for (CallLog__c log : pending) {
-                System.enqueueJob(new TranscriptProcessorQueueable(log.Id, log.transcript_Desc__c, log.Call_Status__c, log.PromptStatus__c));
+                System.enqueueJob(new TranscriptProcessorQueueable(log.Id, log.transcript_Desc__c, log.Call_Status__c, log.PromptStatus__c , log.Feature_CC__c));
             }
         }
     }

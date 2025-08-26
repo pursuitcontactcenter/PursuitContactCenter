@@ -14,4 +14,5 @@ public class TranscriptPayload {
     public CallLog__c parentMergedCall;
     public Id parentMergedCallId;
     public String parentMergedCallLog;
+    public String Feature_CC;
 }
