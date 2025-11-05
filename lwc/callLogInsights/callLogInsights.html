@@ -1,0 +1,55 @@
+<template>
+    <div class="slds-var-m-around_medium" style={qualityColor}>
+        <h2><b class="styleofimprovementpart">🌟 Improvement Part </b></h2>
+        <template if:true={agentInsights}>
+            <div class="section">
+                <h2>🧑‍💼 Agent Improvement</h2>
+                <p><strong>📋 Recommendation:</strong> {agentInsights.Recommendation}</p>
+                <p><strong>💡 Opportunity:</strong> {agentInsights.Opportunity}</p>
+                <template if:true={agentInsights.Guidance}>
+                    <div class="guidanceSteps">
+                        <strong>📌 Guidance Steps:</strong>
+                        <ul>
+                            <template for:each={agentInsights.Guidance} for:item="step">
+                                <li key={step}>{step}</li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <template if:true={processInsights}>
+            <div class="section">
+                <h2>🧩 Process Improvement</h2>
+                <p><strong>📋 Recommendation: </strong> {processInsights.Recommendation}</p>
+                <p><strong>💡 Opportunity: </strong> {processInsights.Opportunity}</p>
+                <template if:true={processInsights.Guidance}>
+                    <div class="guidanceSteps">
+                        <strong>📌 Guidance Steps:</strong>
+                        <ul>
+                            <template for:each={processInsights.Guidance} for:item="step">
+                                <li key={step}>{step}</li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <h2><b class="styleofimprovementpart">🌟 Important Insights </b></h2>
+        <template if:true={filePathways}>
+                <template for:each={filePathways} for:item="group">
+                    <div key={group.l1Prompt} class="file-box">
+                        <div class="l1-prompt-title">{group.l1Prompt}</div>
+                        <template for:each={group.entries} for:item="entry">
+                            <p key={entry.l2} class="entry.answer">{entry.answer}</p>
+                        </template>
+                    </div>
+                </template>
+            </template>
+            <template if:false={filePathways}>
+                <p>No insights available for the selected prompts.</p>
+            </template>
+        <h2 style="padding: 1px;"></h2>
+    </div>
+</template>
