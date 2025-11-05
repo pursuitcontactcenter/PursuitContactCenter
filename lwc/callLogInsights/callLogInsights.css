@@ -1,0 +1,129 @@
+.container {
+    max-width: 700px;
+    margin: 1.5rem auto;
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.section {
+    /* background: #ffffff;
+    border-radius: 0.8rem;
+    padding: 1.2rem 1rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease; */
+        background: #ffffff;
+    border-radius: 0.8rem;
+    padding: 1.2rem 1rem;
+    /* margin-bottom: 7.2rem; */
+    margin: 0px 15px 15px 15px;
+    /* margin-top: 9px; */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+.guidanceSteps{
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+.section h2 {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    color: #032d60;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.6rem;
+}
+
+.section h2::before {
+    content: " ";
+    display: inline-block;
+    width: 5px;
+    height: 20px;
+    background-color: #0176d3;
+    border-radius: 2px;
+    margin-right: 8px;
+}
+
+.section p {
+    margin: 0.4rem 0;
+    color: #2c3e50;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.section strong {
+    color: #005fb2;
+}
+
+ul {
+    margin: 0.5rem 0 0 1.2rem;
+    padding: 0;
+    list-style-type: none;
+}
+
+ul li {
+    margin: 0.3rem 0;
+    padding-left: 1.4rem;
+    position: relative;
+    color: #333;
+    line-height: 1.4;
+    font-size: 0.95rem;
+}
+
+ul li::before {
+    content: "📎";
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+@media screen and (max-width: 600px) {
+    .container {
+        padding: 0.8rem;
+        margin: 0.5rem;
+    }
+    .section {
+        padding: 0.8rem;
+    }
+    .section h2 {
+        font-size: 1rem;
+    }
+}
+
+.slds-var-m-around_medium{
+    padding: 0px;
+    margin: 0px;
+    border-radius: 5px;
+}
+
+.styleofimprovementpart{
+        display: flow;
+    text-align: center;
+    /* margin: 12px; */
+    font-size: 1.50rem;
+    line-height: 2;
+    color: #383a8f;
+}
+/* ------------------------------------------------- */
+.file-box {
+    background: rgb(255, 255, 255);
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin: 15px;
+    box-shadow: 0 1px 3px rgba(8, 6, 102, 0.1);
+    font-size: 1.2rem;
+    
+}
+.file-box div{
+    color: #005fb2;
+    font-size: 16px;
+    font-weight: bold;
+}
